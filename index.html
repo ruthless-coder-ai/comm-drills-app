@@ -454,7 +454,7 @@ const T = {
     notesSub: "每道题背后的原则——附机制解释和一句拿来就能用的话。刷题前扫一眼,或单独当作复习卡片来读。",
     notesEntrySub: "每道题背后的原则——附拿来就能用的话术", drill: "练:",
     notesFooter: "有两项能力基本活在书面练习之外:深度倾听,以及在对方开始感到不安全时实时修复对话。先读懂它们,然后到真实的对话里去练。",
-    title: "职场沟通题库", tagline: "像刷 LeetCode 一样刷沟通题。写下你真实会说的话——AI 红笔批改。",
+    title: "职场沟通题库", tagline: "像刷 LeetCode 一样刷沟通题。写下你真实会说的话——AI 助你成长。",
     attempted: (d, t, a) => `已练 ${d}/${t}${a !== null ? ` · 平均 ${a} 分` : ""} · 进度保存在本设备`,
     newQ: "+ 换一批新题", writing: "出题中…", genFail: "出题失败——请再试一次。", newBadge: "新",
     footer: "答案与批改只保存在本设备浏览器 · 原型版", preview: "设计预览", previewLabel: "设计预览 · 批改页样例数据",
@@ -464,13 +464,18 @@ const T = {
     past: (n) => `历史作答(${n})`, tryAgain: "再答一次", next: "下一题 →",
     worked: "做对了的 ✓", improve: "可以更好的", stronger: "参考改写", original: "你的原稿",
     gradeFail: (m) => `批改失败:${m}。请再试一次。`,
+    libHand: "句", libTitle: "表达库", libEntrySub: "你攒下的好句式——按知识点归档,用的时候来翻",
+    libEmpty: "还没有收藏。批改后,在“参考改写”或“你的原稿”下点“收进表达库”。",
+    saveExpr: "收进表达库", savedExpr: "已收进 ✓", removeExpr: "移除",
+    kindMine: "我的原句", kindRewrite: "参考改写",
+    vsLast: (p) => `上次 ${p}`,
   },
   en: {
     back: "← Back to drills", notesHand: "notes", notesTitle: "Study notes",
     notesSub: "The principles behind the drills — each with the why and a phrase you can actually use. Skim before you practice, or read it as a revision sheet on its own.",
     notesEntrySub: "The principles behind the drills — with phrases you can actually use", drill: "drill: ",
     notesFooter: "Two skills live mostly outside written drills: deep listening, and repairing a live conversation when the other person stops feeling safe. Read about them, then practice them in real rooms.",
-    title: "Workplace Communication Drills", tagline: "Practice communication like you'd grind LeetCode. Write what you'd actually say — AI grades it in red pen.",
+    title: "Workplace Communication Drills", tagline: "Practice communication like you'd grind LeetCode. Write what you'd actually say — with AI coaching to help you grow.",
     attempted: (d, t, a) => `${d}/${t} attempted${a !== null ? ` · avg ${a}` : ""} · progress saved on this device`,
     newQ: "+ new questions", writing: "writing…", genFail: "Couldn't generate new questions — try again.", newBadge: "new",
     footer: "Answers and feedback stay in this browser · Prototype", preview: "design preview", previewLabel: "DESIGN PREVIEW · graded view with sample data",
@@ -480,6 +485,11 @@ const T = {
     past: (n) => `PAST ATTEMPTS (${n})`, tryAgain: "Try again", next: "Next question →",
     worked: "what worked ✓", improve: "areas for improvement", stronger: "A stronger version", original: "Your original",
     gradeFail: (m) => `Grading failed: ${m}. Please try again.`,
+    libHand: "lines", libTitle: "Expression library", libEntrySub: "Phrases you've collected — filed by principle, ready when you write for real",
+    libEmpty: "Nothing saved yet. After grading, tap “Save to library” under the rewrite or your original.",
+    saveExpr: "Save to library", savedExpr: "Saved ✓", removeExpr: "remove",
+    kindMine: "my line", kindRewrite: "rewrite",
+    vsLast: (p) => `last: ${p}`,
   },
 };
 
@@ -559,7 +569,7 @@ ${answer}
 
 只返回 JSON(不要任何其他文字、不要 markdown 代码块):
 {
-  "band": "档位,取值只能是: needs_work | solid | strong | excellent",
+  "band": "档位,取值只能是: collecting | solid | strong | excellent",
   "verdict": "一句话总评,先肯定再升级,30字以内",
   "dimensions": [ {"name": "维度名(从考点提炼3个,尽量短)", "score": 0到5的整数, "comment": "一句点评,20字以内"} ],
   "highlights": ["做得好的点,1-2条,引用原话片段,每条25字以内"],
@@ -567,7 +577,7 @@ ${answer}
   "better": "基于学员回答的改写,保留好的部分——不得长于学员的原答案,能删则删",
   "tip": "一条可迁移的原则,一句话"
 }
-档位校准:needs_work = 敷衍或偏离考点;solid = 基本合格但缺了某个关键动作;strong = 关键动作齐全、结构清晰、没有硬伤——措辞还能更好不妨碍进入 strong;excellent = 几乎无可挑剔,偶尔要舍得给。solid 不是默认的安全选项:该给 strong 就给 strong。维度打分敢于拉开差距:好就是5,一般就是3,缺失就是1。`;
+档位校准:collecting = 还在攒关键动作,敷衍或偏离考点;solid = 基本合格但缺了某个关键动作;strong = 关键动作齐全、结构清晰、没有硬伤——措辞还能更好不妨碍进入 strong;excellent = 几乎无可挑剔,偶尔要舍得给。solid 不是默认的安全选项:该给 strong 就给 strong。维度打分敢于拉开差距:好就是5,一般就是3,缺失就是1。`;
 
   return `You are a senior consultant and communication coach reviewing a workplace communication drill. Be specific, honest, and encouraging — the goal is growth, not judgment. Keep every field CONCISE.
 
@@ -595,7 +605,7 @@ ${answer}
 
 Return ONLY JSON (no other text, no markdown fences):
 {
-  "band": "one of: needs_work | solid | strong | excellent",
+  "band": "one of: collecting | solid | strong | excellent",
   "verdict": "one sentence: affirm first, then the upgrade — max 20 words",
   "dimensions": [ {"name": "short dimension name (derive 3 from key points)", "score": integer 0-5, "comment": "one short remark, max 15 words"} ],
   "highlights": ["1-2 things done well, quoting short fragments of the learner's words"],
@@ -603,7 +613,7 @@ Return ONLY JSON (no other text, no markdown fences):
   "better": "a rewrite of the learner's answer keeping what worked — no longer than their original; cut where possible",
   "tip": "one transferable principle, one short sentence"
 }
-Band calibration: needs_work = minimal effort or off-target; solid = passable but missing a key move; strong = key moves all present, clear structure, no real flaws — wording that could be polished further does NOT block strong; excellent = near-flawless, and do award it occasionally. solid is not the default safe pick: when strong is earned, give strong. Spread dimension scores honestly: good = 5, average = 3, missing = 1.`;
+Band calibration: collecting = still gathering the key moves, minimal effort or off-target; solid = passable but missing a key move; strong = key moves all present, clear structure, no real flaws — wording that could be polished further does NOT block strong; excellent = near-flawless, and do award it occasionally. solid is not the default safe pick: when strong is earned, give strong. Spread dimension scores honestly: good = 5, average = 3, missing = 1.`;
 }
 
 function genPrompt(lang, catName, catDesc, existingTitles) {
@@ -632,7 +642,7 @@ Return ONLY JSON (no other text, no markdown fences):
 { "questions": [ { "title": "short title, 3-6 words", "level": "Easy|Medium|Hard", "scenario": "the situation, 2-4 sentences, ending with the writing instruction", "keyPoints": "Key points: 3-4 concrete grading criteria, separated by semicolons" } ] }`;
 }
 
-const BANDS = { needs_work: [42, 61], solid: [62, 78], strong: [79, 91], excellent: [92, 98] };
+const BANDS = { collecting: [42, 61], solid: [62, 78], strong: [79, 91], excellent: [92, 98] };
 
 async function gradeAnswer(lang, q, answer) {
   const raw = await callLLM(gradePrompt(lang, q, answer));
@@ -680,12 +690,17 @@ function Dots({ n }) {
   );
 }
 
-function ResultView({ result, original, t }) {
+function ResultView({ result, original, t, prevScore, onSave }) {
+  const [saved, setSaved] = useState({});
+  const save = (kind, text) => { if (saved[kind] || !onSave) return; onSave(kind, text); setSaved({ ...saved, [kind]: true }); };
   return (
     <ExamCard>
       <div style={{ display: "flex", gap: 18, alignItems: "center", borderBottom: `1px dashed ${RULE}`, paddingBottom: 18, flexWrap: "wrap" }}>
         <ScoreCircle score={result.score} />
-        <p style={{ ...display, fontSize: 15.5, lineHeight: 1.65, margin: 0, color: INK, flex: 1, minWidth: 180 }}>{result.verdict}</p>
+        <div style={{ flex: 1, minWidth: 180 }}>
+          <p style={{ ...display, fontSize: 15.5, lineHeight: 1.65, margin: 0, color: INK }}>{result.verdict}</p>
+          {prevScore != null && <p style={{ ...hand, fontSize: 17, color: FAINT, margin: "6px 0 0" }}>{t.vsLast(prevScore)}</p>}
+        </div>
       </div>
       <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 14 }}>
         {result.dimensions?.map((d, i) => (
@@ -717,11 +732,23 @@ function ResultView({ result, original, t }) {
       <div style={{ marginTop: 20, background: "#FBF8F1", border: `1px dashed #CFC8B6`, padding: "14px 16px" }}>
         <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px" }}>{t.stronger}</h3>
         <p style={{ fontSize: 13.5, lineHeight: 1.8, margin: 0, whiteSpace: "pre-wrap", color: "#39434F" }}>{result.better}</p>
+        {onSave && (
+          <button onClick={() => save("rewrite", result.better)}
+            style={{ marginTop: 10, fontSize: 12, color: saved.rewrite ? GREEN : SUBINK, background: "none", border: `1px solid ${saved.rewrite ? GREEN : RULE}`, borderRadius: 999, padding: "5px 12px", cursor: "pointer", ...body }}>
+            {saved.rewrite ? t.savedExpr : t.saveExpr}
+          </button>
+        )}
       </div>
       {original && (
         <div style={{ marginTop: 12, border: `1px dashed ${RULE}`, padding: "14px 16px" }}>
           <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px", color: SUBINK }}>{t.original}</h3>
           <p style={{ fontSize: 13.5, lineHeight: 1.8, margin: 0, whiteSpace: "pre-wrap", color: SUBINK }}>{original}</p>
+          {onSave && (
+            <button onClick={() => save("mine", original)}
+              style={{ marginTop: 10, fontSize: 12, color: saved.mine ? GREEN : SUBINK, background: "none", border: `1px solid ${saved.mine ? GREEN : RULE}`, borderRadius: 999, padding: "5px 12px", cursor: "pointer", ...body }}>
+              {saved.mine ? t.savedExpr : t.saveExpr}
+            </button>
+          )}
         </div>
       )}
       {result.tip && (
@@ -795,6 +822,7 @@ function App() {
   const [storeReady, setStoreReady] = useState(false);
   const [genLoading, setGenLoading] = useState(null);
   const [genError, setGenError] = useState(null);
+  const [lastPrev, setLastPrev] = useState(null);
 
   const D = DATA[lang];
   const t = T[lang];
@@ -830,7 +858,7 @@ function App() {
   const openQuestion = (id) => {
     const attempts = getAttempts(id);
     const last = attempts[attempts.length - 1];
-    setActiveId(id); setAnswer(last?.answer || ""); setResult(null); setError(null); setView("question");
+    setActiveId(id); setAnswer(last?.answer || ""); setResult(null); setError(null); setLastPrev(null); setView("question");
   };
 
   const submit = async () => {
@@ -841,12 +869,20 @@ function App() {
       setResult(r);
       const prev = (slice.records || {})[q.id] || {};
       const history = prev.attempts ? [...prev.attempts] : prev.lastResult ? [{ answer: prev.lastAnswer, result: prev.lastResult, ts: prev.ts }] : [];
+      setLastPrev(history.length ? history[history.length - 1].result?.score ?? null : null);
       history.push({ answer, result: r, ts: Date.now() });
       persist({ ...slice, records: { ...slice.records, [q.id]: { best: Math.max(prev.best || 0, r.score), attempts: history.slice(-30) } } });
     } catch (e) {
       setError(t.gradeFail(e.message || "?"));
     } finally { setLoading(false); }
   };
+
+  const saveExpr = (kind, text) => {
+    const kps = (q?.kp || []).map((id) => D.kps.find((k) => k.id === id)?.name).filter(Boolean);
+    const item = { id: `x-${Date.now()}`, ts: Date.now(), qtitle: q?.title || "", kps, kind, text };
+    persist({ ...slice, lib: [item, ...(slice.lib || [])] });
+  };
+  const delExpr = (id) => { persist({ ...slice, lib: (slice.lib || []).filter((x) => x.id !== id) }); };
 
   const refreshCategory = async (catKey) => {
     if (genLoading) return;
@@ -872,6 +908,37 @@ function App() {
       ))}
     </div>
   );
+
+  if (view === "library") {
+    const lib = slice.lib || [];
+    return (
+      <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
+        <GlobalStyle />
+        <div style={{ maxWidth: 660, margin: "0 auto", padding: "18px 16px 64px" }}>
+          <button onClick={() => setView("list")} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>{t.back}</button>
+          <header style={{ marginBottom: 20 }}>
+            <h1 style={{ ...display, fontSize: 24, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>{t.libTitle}</h1>
+            <p style={{ margin: "8px 0 0", fontSize: 13.5, lineHeight: 1.7, color: SUBINK }}>{t.libEntrySub}</p>
+            <div style={{ borderBottom: `3px double ${INK}`, marginTop: 14 }} />
+          </header>
+          {lib.length === 0 && <p style={{ fontSize: 13.5, color: FAINT, lineHeight: 1.8 }}>{t.libEmpty}</p>}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {lib.map((x) => (
+              <ExamCard key={x.id} marginColor={INK_SOFT} style={{ boxShadow: "none" }}>
+                <p style={{ fontSize: 13.5, lineHeight: 1.85, margin: 0, whiteSpace: "pre-wrap", color: "#39434F" }}>{x.text}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                  <span style={{ ...hand, fontSize: 16, color: x.kind === "mine" ? GREEN : SUBINK }}>{x.kind === "mine" ? t.kindMine : t.kindRewrite}</span>
+                  <span style={{ fontSize: 11.5, color: FAINT }}>{x.qtitle}{x.kps?.length ? " · " + x.kps.join(" · ") : ""}</span>
+                  <span style={{ flex: 1 }} />
+                  <button onClick={() => delExpr(x.id)} style={{ fontSize: 11, color: FAINT, background: "none", border: "none", cursor: "pointer", textDecoration: "underline", ...body }}>{t.removeExpr}</button>
+                </div>
+              </ExamCard>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (view === "notes") {
     return <StudyNotes D={D} t={t} questions={allQuestions} onBack={() => setView("list")} onOpenQuestion={openQuestion} />;
@@ -913,6 +980,18 @@ function App() {
             <span style={{ flex: 1 }}>
               <span style={{ display: "block", fontSize: 14, fontWeight: 600 }}>{t.notesTitle}</span>
               <span style={{ display: "block", fontSize: 12.5, color: SUBINK, marginTop: 2 }}>{t.notesEntrySub}</span>
+            </span>
+            <span style={{ color: FAINT, fontSize: 16 }}>→</span>
+          </button>
+
+          <button onClick={() => setView("library")}
+            style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", marginTop: 10,
+              background: CARD, border: `1px solid ${RULE}`, borderLeft: `3px solid ${GREEN}`, padding: "14px 16px",
+              cursor: "pointer", boxShadow: "0 1px 2px rgba(35,43,54,0.05)" }}>
+            <span style={{ ...hand, fontSize: 24, color: GREEN, flexShrink: 0, transform: "rotate(-3deg)" }}>{t.libHand}</span>
+            <span style={{ flex: 1 }}>
+              <span style={{ display: "block", fontSize: 14, fontWeight: 600 }}>{t.libTitle}{(slice.lib || []).length ? ` (${slice.lib.length})` : ""}</span>
+              <span style={{ display: "block", fontSize: 12.5, color: SUBINK, marginTop: 2 }}>{t.libEntrySub}</span>
             </span>
             <span style={{ color: FAINT, fontSize: 16 }}>→</span>
           </button>
@@ -1009,7 +1088,7 @@ function App() {
                 <p style={{ ...mono, fontSize: 11, color: FAINT, margin: "0 0 6px", letterSpacing: 0.5 }}>{t.past(attempts.length)}</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {[...attempts].reverse().map((a, i) => (
-                    <button key={a.ts || i} onClick={() => { setAnswer(a.answer || ""); setResult(a.result); }}
+                    <button key={a.ts || i} onClick={() => { setAnswer(a.answer || ""); setResult(a.result); setLastPrev(null); }}
                       style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left", minHeight: 44,
                         background: "none", border: `1px dashed ${RULE}`, padding: "9px 12px", cursor: "pointer", ...body }}>
                       <span style={{ ...hand, fontSize: 19, color: RED, width: 34, flexShrink: 0, transform: "rotate(-3deg)" }}>{a.result?.score}</span>
@@ -1025,7 +1104,7 @@ function App() {
 
         {result && (
           <div style={{ marginTop: 16 }} className="rise">
-            <ResultView result={result} original={answer} t={t} />
+            <ResultView result={result} original={answer} t={t} prevScore={lastPrev} onSave={saveExpr} />
             <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
               <button onClick={() => { setResult(null); setError(null); }}
                 style={{ flex: 1, minHeight: 48, background: CARD, border: `1.5px solid ${INK}`, color: INK, padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", ...body }}>{t.tryAgain}</button>
