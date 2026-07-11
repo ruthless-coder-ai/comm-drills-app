@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>职场沟通题库</title>
+<style>html,body{margin:0;padding:0;background:#F8F5EE;}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" data-presets="react">
+const { useState, useMemo, useEffect } = React;
+
+/* ------------------------------------------------------------------ */
+/*  设计变量                                                            */
+/* ------------------------------------------------------------------ */
+const PAPER = "#F8F5EE";
+const CARD = "#FFFFFF";
+const INK = "#232B36";
+const SUBINK = "#5A6472";
+const FAINT = "#8F98A6";
+const GRID = "rgba(140,160,185,0.14)";
+const RED = "#C4322A";
+const RED_SOFT = "rgba(196,50,42,0.32)";
+const INK_SOFT = "rgba(35,43,54,0.25)";
+const GREEN = "#2E6B4E";
+const AMBER = "#A9761C";
+const RULE = "#E2DDD0";
+
+const display = { fontFamily: '"Noto Serif SC", "Songti SC", "SimSun", serif' };
+const hand = { fontFamily: '"Ma Shan Zheng", "Kaiti SC", "KaiTi", cursive' };
+const body = { fontFamily: '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif' };
+const mono = { fontFamily: '"IBM Plex Mono", "SF Mono", Menlo, monospace' };
+
+const gridBg = {
+  backgroundColor: PAPER,
+  backgroundImage: `linear-gradient(${GRID} 1px, transparent 1px), linear-gradient(90deg, ${GRID} 1px, transparent 1px)`,
+  backgroundSize: "28px 28px",
+};
+
+function GlobalStyle() {
+  return (
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&family=Ma+Shan+Zheng&family=IBM+Plex+Mono:wght@400;500&display=swap');
+      * { -webkit-tap-highlight-color: transparent; }
+      button { touch-action: manipulation; }
+      button:focus-visible, textarea:focus-visible { outline: 2px solid ${INK}; outline-offset: 2px; }
+      textarea:focus { border-color: ${INK} !important; }
+      @keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes penCircle { from { opacity: 0; transform: rotate(-6deg) scale(1.25); } to { opacity: 1; transform: rotate(-6deg) scale(1); } }
+      .rise { animation: riseIn .45s ease both; }
+      .pen  { animation: penCircle .5s cubic-bezier(.2,1.2,.4,1) .15s both; }
+      @media (prefers-reduced-motion: reduce) { .rise, .pen { animation: none; } }
+    `}</style>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  分类                                                                */
+/* ------------------------------------------------------------------ */
+const CATEGORIES = {
+  up: { num: "一", name: "向上沟通", desc: "对方要的是确定性,不是你的内心过程" },
+  capacity: { num: "二", name: "承诺与容量", desc: "你的估算和精力都有硬上限" },
+  pressure: { num: "三", name: "高压表现", desc: "为最差状态的自己做冗余设计" },
+  client: { num: "四", name: "客户沟通", desc: "正确是不够的,还必须有帮助" },
+  peers: { num: "五", name: "平级·向下·三角关系", desc: "没有权威时,靠共同目标推动" },
+  self: { num: "六", name: "为自己发声", desc: "机会看不见你,就选不到你" },
+};
+
+/* ------------------------------------------------------------------ */
+/*  知识点库                                                            */
+/* ------------------------------------------------------------------ */
+const KNOWLEDGE = [
+  // 一 · 向上沟通
+  { id: "I-1", cat: "up", name: "确定性优先", principle: "收到反馈或指令时,对方需要知道的是\u201c这事被接住了\u201d,不是它的历史成因。", how: "\u201c明白。接下来我会做:A、B、C。\u201d不解释来龙去脉,道歉最多一次。" },
+  { id: "I-2", cat: "up", name: "坏消息自带方案", principle: "问题第一时间上报,第一句直说问题本身,同一口气带上影响评估和修复计划。", how: "\u201c周四报告有一页口径取错,偏差约15%。更正版下午两点前给您,建议向客户按主动数据更新来说。\u201d" },
+  { id: "I-3", cat: "up", name: "过程可见", principle: "误解生长在信息真空里。稳定输出\u201c做了什么/发现了什么/下一步\u201d,别人的抱怨传来时,老板手里已有你的版本。", how: "每周一条简短进展;风险在爆炸前主动预警,而不是之后解释。" },
+  { id: "I-4", cat: "up", name: "意图标注", principle: "开口前先说为什么要说,防止动作被误读。", how: "\u201c补充一个前提对齐,因为它影响后面的结论:……\u201d" },
+  { id: "I-5", cat: "up", name: "对齐,不翻案", principle: "被错误纠正时,拿出依据,但以\u201c对齐信息\u201d的姿态,不是打赢官司;给对方留台阶。", how: "\u201c我补充的那点对应客户邮件第一条(附原文)——可能是我们理解的角度不一样?\u201d" },
+  { id: "I-6", cat: "up", name: "反馈也能向上流", principle: "可以给老板提反馈——挂在她的目标上,并先问她想要什么样的反馈。", how: "\u201c有个可能对X有帮助的观察,方便从我的角度说一下吗?\u201d" },
+  { id: "I-7", cat: "up", name: "多头汇报,冲突上桌", principle: "有多位老板时,绝不私下消化他们互相冲突的要求——把冲突摆到明处,让他们裁决优先级。", how: "\u201cA和B都落在周五,我只能做好一个。两位能对齐一下哪个优先吗?\u201d" },
+  { id: "I-8", cat: "up", name: "带着功课去提问", principle: "问题附上你查过的东西和你的猜测,提问就成了能力的证明而不是暴露。", how: "\u201c我查了X和Y,我的理解是Z——方向对吗?\u201d" },
+  // 二 · 承诺与容量
+  { id: "II-1", cat: "capacity", name: "乘上自己的历史系数", principle: "所有人的估时都系统性乐观。用你自己的修正系数(你的数据是×2),并且把真实数字说出口。", how: "报时间前先问自己:我现在想砍掉的这部分,打算用哪天的睡眠来付?" },
+  { id: "II-2", cat: "capacity", name: "不当场答应", principle: "大多数overcommit发生在当场、社交压力之下。给自己争取一个间隔。", how: "\u201c我看一下手头的排期,今天下班前答复你。\u201d" },
+  { id: "II-3", cat: "capacity", name: "把\u201c不\u201d翻译成取舍", principle: "你很少需要拒绝;你需要的是把容量透明化,把优先级的决定权还回去。", how: "\u201c可以做——但X或Y要让路,您看哪个优先?\u201d" },
+  { id: "II-4", cat: "capacity", name: "重新协商要趁早", principle: "周二修订的承诺,好过周四的意外。原因一句就够,关键是给出新的、具体的承诺。", how: "\u201c数据清洗比预想复杂。两个选项:周四粗版+周五终版,或直接周五终版。您定。\u201d" },
+  { id: "II-5", cat: "capacity", name: "报长交早", principle: "报长一点、交早一点,显得可靠;报个体面数字再延期,显得失控。同样的工时,完全不同的叙事。", how: "报×2的数字,然后在它之前交付。" },
+  { id: "II-6", cat: "capacity", name: "守住你的休息", principle: "休息是容量规划,不是软弱。交接做到没人需要找你的程度。", how: "每件事指定代理人,列清状态与下一步,写明返回日期——并且不为休假道歉。" },
+  // 三 · 高压表现
+  { id: "III-1", cat: "pressure", name: "把开场练进肌肉记忆", principle: "紧张最先吃掉的是即兴能力。把开场两句、每部分第一句、结尾一句练到最差状态下也能脱口而出。", how: "开场能脱口而出,心跳自然会降下来,中间部分自己就顺了。" },
+  { id: "III-2", cat: "pressure", name: "先接住,再回应", principle: "被质疑时,一句缓冲加诚实承认,胜过立刻辩护。", how: "\u201c这是个合理的挑战——样本确实小。支撑这个方向的还有X,详细依据我会后发您。\u201d" },
+  { id: "III-3", cat: "pressure", name: "预设恢复动作", principle: "伤害不来自卡壳,来自卡壳后的慌乱。提前决定好断线时说什么。", how: "\u201c这一点我换个角度说。\u201d或者:停顿,喝口水,重启这句话。" },
+  { id: "III-4", cat: "pressure", name: "缩小赌注", principle: "\u201c证明自己\u201d是个吓坏大脑的无边界任务。给每次表现一个小而具体的目标。", how: "\u201c把结论页讲清楚。\u201d——今天的全部任务就这一个。" },
+  { id: "III-5", cat: "pressure", name: "别一个人扛下全场", principle: "内容+设备+控场是超载配置;在这种配置下发挥不稳,是物理,不是性格。", how: "\u201c我来讲X部分——翻页和会议线路能请人盯一下吗?\u201d" },
+  { id: "III-6", cat: "pressure", name: "结构化即兴", principle: "被点名而没有观点?观察→初步判断→待验证项,并标注这是初步的。", how: "\u201c目前我看到的是X;初步判断是Y;下结论前我想先确认Z。\u201d" },
+  { id: "III-7", cat: "pressure", name: "专业地说\u201c不知道\u201d", principle: "承认盲区+给出跟进承诺,比现编的填充物赢得更多信任。", how: "\u201c这个我不想猜——我确认后明天中午前发给您。\u201d" },
+  // 四 · 客户沟通
+  { id: "IV-1", cat: "client", name: "先答对方最关心的", principle: "结论先行、决策相关的先行——绝不机械地按提问顺序回答。", how: "开口先回应他最在意的那个问题,其余折叠在后面。" },
+  { id: "IV-2", cat: "client", name: "澄清折叠进主线", principle: "纠错是为结论服务的;以带标注的注脚形式给出,而不是对客户错误的独立宣判。", how: "\u201c顺带对齐一个前提,因为它影响刚才的结论:研究覆盖的是B而非A——这意味着……\u201d" },
+  { id: "IV-3", cat: "client", name: "小承诺,安静兑现", principle: "信任靠微承诺的准时兑现复利增长——议程提前确认、变动第一时间通知、纪要说到做到。", how: "每次会后:一条简短的书面纪要,写清决定了什么、接下来发生什么。" },
+  { id: "IV-4", cat: "client", name: "坦率而不刺人", principle: "资深的人要的是直话,不是包装好的安慰。分歧可以直说,但话不带刺。", how: "\u201c这一点我想提出不同看法——让我担心的数据是这个。\u201d" },
+  { id: "IV-5", cat: "client", name: "让它成为对方的主意", principle: "建议在客户拥有决策感时才落地。摆出选项和取舍,让他做最后那步。", how: "\u201c两条可行路径,风险不同。按你们董事会的风格,哪种取舍更合适?\u201d" },
+  { id: "IV-6", cat: "client", name: "催办要给抓手", principle: "追进度有效的前提是让\u201c答应\u201d毫不费力:一个问题、一个日期、一个默认选项。", how: "\u201c要赶上15号,需要您对X拍板。若周四前没收到回复,我先按方案A推进。\u201d" },
+  { id: "IV-7", cat: "client", name: "守住底线,点出共同利益", principle: "拒绝不当要求,靠保护你们共同在乎的东西,而不是说教。", how: "\u201c删掉风险页,万一日后曝出对您反而是风险——不如我把它重新组织得更好接受。\u201d" },
+  { id: "IV-8", cat: "client", name: "不甩锅,不揽锅", principle: "传达他人造成的延误:事实、影响、恢复计划。没有替罪羊,也没有虚假的揽责。", how: "\u201c上游依赖使时间线推后一周。这是修订计划,以及我们为保住最终日期在做的事。\u201d" },
+  // 五 · 平级·向下·三角关系
+  { id: "V-1", cat: "peers", name: "平级靠共同目标撬动", principle: "没有权威,裁决会被弹回。描述对共同产出的影响,提出双方都受益的解法。", how: "\u201c模块晚到我就得连夜返工。要不我们试试周三加个同步,咱俩都别再救火了?\u201d" },
+  { id: "V-2", cat: "peers", name: "纠正工作,保护人", principle: "对junior:具体的错、具体的改法、明确重申信心。第一次独立干活的人,记语气比记内容久。", how: "\u201c有两个数要重新取,正确的源在这里。结构和思路是对的,这是第一次跑都会踩的坑。\u201d" },
+  { id: "V-3", cat: "peers", name: "二手信息回源头验证", principle: "转述来的批评,只是关于一场你不在场的对话的数据。直接去问,别按转述行动。", how: "\u201c我更想直接听您说——我的workstream有什么您希望做得不一样的地方吗?\u201d" },
+  { id: "V-4", cat: "peers", name: "被拆台时搭桥,不开战", principle: "同事当着客户面唱反调:先承接,重新框定为严谨,细节移到会后。", how: "\u201c对——我们内部严格压力测试过,所以对这个区间有信心。会后我可以详细讲那场讨论。\u201d" },
+  { id: "V-5", cat: "peers", name: "善意终结救火模式", principle: "帮一次是慷慨,第三次就是结构问题。点出模式,提供流程,而不是献祭你的晚上。", how: "\u201c今晚不行。我注意到这些总落在周五——要不设个提前的检查点,咱们都别卡死?\u201d" },
+  { id: "V-6", cat: "peers", name: "说服是借给别人理由", principle: "支持跟随可信度、共同点和一个别人能转述的故事——不跟随你信念的强度。", how: "用每个听众自己正在追求的目标,来框定你的提案。" },
+  // 六 · 为自己发声
+  { id: "VI-1", cat: "self", name: "汇报成果,不是汇报辛苦", principle: "贡献以\u201c有用信息\u201d的形式可见,而非鼓掌请求。说清什么曾处于风险、现在什么安全了。", how: "\u201c同步一下:那个会砸掉周一交付的管道问题,已经修复——需要细节随时说。\u201d" },
+  { id: "VI-2", cat: "self", name: "主动开口要机会", principle: "项目和staffing流向早早、具体地表达过兴趣的人。安静地想要,等于不想要。", how: "\u201c听说AI那条线在组人——我做过X和Y,很希望被考虑进去。\u201d" },
+  { id: "VI-3", cat: "self", name: "打开晋升对话", principle: "证据+提问——你不是索要判决,是索要地图。", how: "\u201c我认为自己在A、B、C上已按下一级别交付。要支持这个case,您还需要看到什么?\u201d" },
+  { id: "VI-4", cat: "self", name: "收尾三件套:谁/什么/何时", principle: "没有负责人和日期的对话会蒸发。说清决定、行动,以及悬而未决的怎么解决。", how: "\u201c确认一下:我周三前做A,您确认B,C留到周五例会定——对吗?\u201d" },
+  { id: "VI-5", cat: "self", name: "给自己的版本留档", principle: "你的现实不需要谁的签字才成立。安静地记工作日志——证据安放无力感,偶尔还赢下长局。", how: "日期、交付物、关键邮件。不为对质,为脚下有地。" },
+];
+
+/* ------------------------------------------------------------------ */
+/*  题库(35 题)                                                        */
+/* ------------------------------------------------------------------ */
+const BUILTIN = [
+  // 一 · 向上沟通(10)
+  { id: "b1", cat: "up", level: "简单", title: "接住一条反馈", kp: ["I-1"],
+    scenario: "1v1 里,老板对你说:\u201c你上次发给客户的分析,结论埋得太深,客户找了半天才看到重点。\u201d\n\n你怎么回?写下你真实会说的话。",
+    keyPoints: "考点:不解释历史成因、不过度道歉;用\u201c明白+接下来的具体动作(ABC)\u201d回应;让老板确定这事被接住了、会改变。" },
+  { id: "b2", cat: "up", level: "简单", title: "每周进展同步", kp: ["I-3"],
+    scenario: "周五下午。本周你完成了 15 场专家访谈中的 6 场,并发现某个细分市场的数据与客户预期差异很大(可能是雷)。下周:完成剩余访谈,开始中期汇报框架。\n\n写下发给老板的这条同步消息。",
+    keyPoints: "考点:结构清晰(做了/发现/下一步);风险主动提出而非隐瞒;简短,不堆细节不邀功。" },
+  { id: "b3", cat: "up", level: "中等", title: "被当众纠正之后", kp: ["I-5"],
+    scenario: "团队群里,你补充回答了客户的一个问题。老板公开回复:\u201c那不是客户的问题。\u201d你核对过——客户在邮件里确实问了,只是角度和老板读到的不同。\n\n你现在私聊她。写下开场和内容。",
+    keyPoints: "考点:不在对错上争胜负;以\u201c对齐信息\u201d而非\u201c翻案\u201d的姿态给出依据;给她台阶;语气平静专业。" },
+  { id: "b4", cat: "up", level: "困难", title: "坏消息早报", kp: ["I-2"],
+    scenario: "三天前发给客户的报告里,有一页数据口径取错——数字偏差约 15%。客户还没发现。老板下午有客户电话会。\n\n你现在去告诉她。写下你会说的话。",
+    keyPoints: "考点:立即上报;第一句直说问题,不铺垫;同时带上影响与修复(哪页、何时给更正版、建议的客户措辞);不过度自责。" },
+  { id: "b11", cat: "up", level: "困难", title: "老板失联时替她决定", kp: ["I-2", "III-6"],
+    scenario: "老板在长途航班上,失联六小时。客户要求今天下班前确认一个方案细节,而你有八成把握知道老板会怎么选。\n\n写下 (a) 你回客户的话,和 (b) 老板落地后看到的那条留言。",
+    keyPoints: "考点:对客户——在已知意图内决定并标注(\u201c按我们的工作假设先行确认\u201d);对老板——发生了什么、你决定了什么、为什么、哪些还可逆;不搞道歉表演。" },
+  { id: "b12", cat: "up", level: "简单", title: "会提问,不露怯", kp: ["I-8"],
+    scenario: "你接手一个新 workstream,有个基础概念没弄清。瞎猜会出真错;开口又怕暴露。\n\n写下你发给老板的提问消息。",
+    keyPoints: "考点:带上功课(你查了什么)和你的最佳猜测;问题窄而可答;框定为\u201c验证\u201d,不是\u201c求救\u201d。" },
+  { id: "b13", cat: "up", level: "困难", title: "当面纠正更资深的人", kp: ["I-4", "IV-4"],
+    scenario: "工作会上,一位比你老板还资深的合伙人提出的方案建立在一个事实错误上——而正确数据就在你的电脑里。满屋子人。\n\n写下你当场怎么提出。",
+    keyPoints: "考点:纠正事实,不纠正人;标注意图(\u201c有个数据点可能影响这个方案\u201d);把信息递出去,让资深者自己得出结论;不显胜利感。" },
+  { id: "b14", cat: "up", level: "困难", title: "两个老板,一个周五", kp: ["I-7", "II-3"],
+    scenario: "你的美国高级经理和欧洲经理,各给了你一个周五交付的任务。两个都做好不可能;她们彼此没通过气。\n\n写下让冲突浮出水面的那条消息(并决定发给谁)。",
+    keyPoints: "考点:不私下消化冲突;把两个需求摆到同一处可见;诚实说明容量;把优先级决定权交还她们;语气中性,无抱怨。" },
+  { id: "b15", cat: "up", level: "中等", title: "给老板的反馈", kp: ["I-6"],
+    scenario: "老板总在客户会前一晚重写你的 slides,还会改出错误,你得在会上现场救。你想改变这件事,又不想让它听起来像指控。\n\n写下你在下次 1v1 里怎么开启这个话题。",
+    keyPoints: "考点:锚定共同目标(干净的客户会);描述模式性事实,不描述人;提出具体替代方案(提前的review节点);用请求,不用要求。" },
+  { id: "b16", cat: "up", level: "简单", title: "给模糊会议收尾", kp: ["VI-4"],
+    scenario: "一小时的内部会刚结束,讨论热烈,但没有明确负责人。你怀疑下周之前什么都不会发生。\n\n写下你会后马上发到群里的那条消息。",
+    keyPoints: "考点:陈述决定了什么;点名谁在何时前做什么;标出那个悬而未决的点及其解决方式;邀请纠正(\u201c如有记错请指出\u201d)。" },
+
+  // 二 · 承诺与容量(5)
+  { id: "b5", cat: "capacity", level: "简单", title: "今晚帮不了的忙", kp: ["II-3", "V-5"],
+    scenario: "下午五点,同事发消息:\u201c客户临时要一版竞品对比,今晚要,能帮我搭两页吗?\u201d你今晚和伴侣有约,明早还有自己的交付。\n\n写下你的回复。",
+    keyPoints: "考点:既不硬接也不干拒;给出可行替代(明早几点前/帮到某个程度);边界清晰,姿态合作。" },
+  { id: "b6", cat: "capacity", level: "中等", title: "新任务撞上旧 deadline", kp: ["II-2", "II-3"],
+    scenario: "周五下午,老板说:\u201c客户想周一看到定价策略的初步分析,你来做。\u201d你手头已有两个周二要交的 deliverable,而且不想周末加班。\n\n写下你的回复。",
+    keyPoints: "考点:不当场硬吞;容量透明化,把取舍交回;报真实可行的时间,不报体面数字。" },
+  { id: "b7", cat: "capacity", level: "困难", title: "重新协商一个承诺", kp: ["II-4", "II-5"],
+    scenario: "上周你承诺周四交完整的市场规模模型。现在是周二晚,数据清洗比预想复杂得多——周四只能给粗糙版。\n\n你决定现在就说。写下这条消息。",
+    keyPoints: "考点:提前而非到期才说;原因诚实一句;新的具体承诺或选项;让她保有掌控感。" },
+  { id: "b17", cat: "capacity", level: "困难", title: "悄悄膨胀的项目范围", kp: ["II-3", "I-4"],
+    scenario: "四次周会下来,客户\u201c顺口\u201d加了三个小需求。单个都不大,累计已超出 SOW——而你的老板倾向于讨好客户。\n\n写下你在内部怎么向老板提出。",
+    keyPoints: "考点:量化累积(小时数,不是感受);框定为保护核心交付,不是抵触客户;给选项(消化X、推迟Y、重议Z);客户那边的沟通让老板决定。" },
+  { id: "b18", cat: "capacity", level: "中等", title: "让你安心消失的交接", kp: ["II-6"],
+    scenario: "下周你休假五天;项目正在关键期。你想真正断联——不带电脑去海边。\n\n写下发给老板和团队的交接消息。",
+    keyPoints: "考点:每个未结事项都有代理人;状态+下一步+资料在哪;什么情况才值得打扰你(几乎没有)以及怎么联系;不为休假道歉。" },
+
+  // 三 · 高压表现(5)
+  { id: "b8", cat: "pressure", level: "中等", title: "展示中被当场质疑", kp: ["III-2"],
+    scenario: "你正向客户展示。讲到关键数据页,对方打断:\u201c样本量这么小,这能说明什么?\u201d你心跳加速,大脑短暂空白。\n\n写下你会说的话(包括你怎么给自己争取缓冲)。",
+    keyPoints: "考点:先接住再回应(缓冲+诚实承认局限);给出样本量之外的支撑或承诺补充验证;不慌乱堆砌;允许移到书面跟进。" },
+  { id: "b19", cat: "pressure", level: "中等", title: "突然被点名", kp: ["III-6"],
+    scenario: "会议进行到一半,老板转向你:\u201c这块你怎么看?\u201d——而你还没形成观点。\n\n写下你开口的前两三句。",
+    keyPoints: "考点:结构化即兴——观察、初步判断、待验证项;标注这是初步的;不硬编,也不塌缩成\u201c不知道\u201d。" },
+  { id: "b20", cat: "pressure", level: "简单", title: "演示炸了", kp: ["III-3"],
+    scenario: "远程向客户高管演示。共享屏幕卡死,恢复不了。八个人在线上安静地等。\n\n写下接下来三十秒你说的话,和你的补救顺序。",
+    keyPoints: "考点:平静地把现场说出来(冷场只会显得混乱);切换的同时给听众东西(口头讲核心结论/先发材料/同事共享);备用顺序是提前定好的,不是现场发明的。" },
+  { id: "b21", cat: "pressure", level: "中等", title: "还剩十分钟,插不上话", kp: ["III-1", "V-6"],
+    scenario: "五人客户会。两位 senior 同事主导了对话;你有一个重要观点;会议还剩十分钟。\n\n写下你切入的那句话。",
+    keyPoints: "考点:用钩子切入(\u201c收尾前有一点会影响时间线——\u201d);一个观点,结论先行;简短是插话的入场费。" },
+  { id: "b22", cat: "pressure", level: "中等", title: "答不上来的问题", kp: ["III-7"],
+    scenario: "客户问了一个你真不知道答案的事实性问题。全场安静;你老板在场。\n\n写下你的回应。",
+    keyPoints: "考点:不带戏剧性地承认盲区;给出具体跟进(什么、何时);相邻知识可以给但要标注;不现场瞎猜。" },
+
+  // 四 · 客户沟通(6)
+  { id: "b9", cat: "client", level: "中等", title: "会后的书面澄清", kp: ["IV-2", "IV-3"],
+    scenario: "会上客户一直以为研究覆盖情况 A——实际是情况 B。你当时没展开。现在写跟进邮件,需要两三句话澄清这个前提及其对结论的影响。\n\n写下这两三句。",
+    keyPoints: "考点:澄清为结论服务(带标注的注脚,不是独立纠错);说清B对已展示内容意味着什么;对齐语气,简短。" },
+  { id: "b10", cat: "client", level: "困难", title: "五个问题,先答哪个", kp: ["IV-1", "IV-2"],
+    scenario: "客户连珠炮问了五个散乱的问题。最后两个才是真正的商业决策;而第一个暴露他把研究前提理解错了(A vs B)——这会扭曲他对一切的理解。\n\n写下你开口的前三四句(顺序和衔接)。",
+    keyPoints: "考点:先答两个核心问题;A/B澄清折叠在后并标注意图;不按提问顺序机械作答。" },
+  { id: "b23", cat: "client", level: "困难", title: "不是你造成的延误", kp: ["IV-8"],
+    scenario: "上游团队的延误使你的交付推迟一周。由你来通知客户。\n\n写下这封邮件——不甩锅同事,不揽下不属于你的责任,也不丢掉客户的信心。",
+    keyPoints: "考点:先讲事实与影响;恢复计划里保住最终日期;团队用\u201c我们\u201d,没有替罪羊;给一个重建信心的检查点。" },
+  { id: "b24", cat: "client", level: "困难", title: "他们想删的那一页", kp: ["IV-7", "IV-4"],
+    scenario: "客户对接人私下让你\u201c上董事会前把那页去掉\u201d——但那是关键的风险披露页。\n\n写下你的回复。",
+    keyPoints: "考点:守线时点出共同利益(日后曝出对他的风险);给建设性替代(重新框定、加上下文、提前吹风);不说教,也不让步;适时让老板知情。" },
+  { id: "b25", cat: "client", level: "简单", title: "有效的催办", kp: ["IV-6"],
+    scenario: "五天前你给客户的关键决策人发了封需要她拍板的邮件。杳无音信;deadline 在逼近。\n\n写下这封 follow-up。",
+    keyPoints: "考点:一个问题,重述到不用翻旧邮件;日期绑着后果;给一个默认选项;语气温和,零阴阳怪气。" },
+  { id: "b26", cat: "client", level: "困难", title: "让决策属于他们", kp: ["IV-5", "IV-1"],
+    scenario: "你的分析明显支持方案 B,但这位客户抗拒被告知答案——顾问的建议在他们委员会里向来死路一条。\n\n写下你在指导委员会上怎么呈现这个选择,让客户觉得决定是他们自己做的。",
+    keyPoints: "考点:两个方案连同诚实的取舍一起摆出;评估标准锚定客户自己说过在乎的东西;问出决定性的问题而不是宣布裁决;准备好把他们的选择书面确认。" },
+
+  // 五 · 平级·向下·三角关系(6)
+  { id: "b27", cat: "peers", level: "困难", title: "二手批评", kp: ["V-3"],
+    scenario: "同事私下告诉你:\u201c领导会上,你老板说你的 workstream 是最弱的一环。\u201d老板本人从未对你说过。\n\n要不要主动提?若提,写下你的开场;若不提,写下你的理由。",
+    keyPoints: "考点:不按转述行动、不暴露信源;直接去问,问的是workstream本身而非那句话;姿态是邀请反馈,不是索要解释;保护告诉你的人。" },
+  { id: "b28", cat: "peers", level: "中等", title: "第三次周五救火", kp: ["V-5"],
+    scenario: "同一位同事又在周五晚上找你救他的交付——第三次了,原因还是他自己开工太晚。前两次你都帮了。\n\n写下你的回复。",
+    keyPoints: "考点:善意地拒绝这一次;点出模式,不诊断人品;提供结构(更早的检查点)而不是你的晚上;关系留温度。" },
+  { id: "b29", cat: "peers", level: "困难", title: "客户面前被拆台", kp: ["V-4"],
+    scenario: "展示中,你的同事插话:\u201c其实这个数据我们内部还有争议。\u201d客户神色一变。\n\n写下你在现场接下来说的话。",
+    keyPoints: "考点:搭桥不开战;把内部争议重新框定为严谨;说出你们共同确信的部分;细节移到会后;永远不当着客户算账。" },
+  { id: "b30", cat: "peers", level: "中等", title: "总出错的模块", kp: ["V-1"],
+    scenario: "一位平级同事的模块反复报错,每次都让你连夜返工自己的部分。你对他没有任何权威。\n\n写下你开启这场对话的方式。",
+    keyPoints: "考点:共同目标先行;事实性描述对共同产出的影响;提出双赢的修复(检查点、测试协议);不评判他的能力。" },
+  { id: "b31", cat: "peers", level: "简单", title: "她的第一份分析有错", kp: ["V-2"],
+    scenario: "一位 junior 同事第一次独立完成的分析里有明显错误。她显然很紧张这次的表现。\n\n写下你的反馈消息。",
+    keyPoints: "考点:具体的错、具体的改法、正确的数据源;把工作和人分开;明确重申信心;校准为\u201c第一次都会踩的坑\u201d。" },
+  { id: "b32", cat: "peers", level: "中等", title: "没有权威的说服", kp: ["V-6"],
+    scenario: "你想在团队里试点一个 AI 辅助工作流,需要两位平级同事试用两周——他们又忙又怀疑,而你无权要求任何人。\n\n写下你的 pitch 消息。",
+    keyPoints: "考点:用他们当下的痛点框定,而非你想法的精妙;缩小请求(两周、可撤销);给他们一个可转述的故事;让\u201c试试\u201d比\u201c拒绝\u201d更省事。" },
+
+  // 六 · 为自己发声(3)
+  { id: "b33", cat: "self", level: "中等", title: "没人看见的周末救援", kp: ["VI-1"],
+    scenario: "周末你悄悄修复了一个数据管道问题,否则周一的交付会砸。没人知道。\n\n写下你在周一站会上怎么提这件事。",
+    keyPoints: "考点:以风险信息的形式汇报,不是鼓掌请求(\u201c同步一下:X本会砸掉交付——已修复\u201d);影响一句话;细节\u201c需要就给\u201d而不硬塞;两句话之内闭嘴。" },
+  { id: "b34", cat: "self", level: "中等", title: "开口要想要的项目", kp: ["VI-2"],
+    scenario: "下季度那个 AI 相关的项目在组人。牵头的合伙人只见过你一面。你想上。\n\n写下你发给她的消息。",
+    keyPoints: "考点:早而具体地表达兴趣;两行相关证据(你在这个领域做过什么);一个小而具体的请求(聊一次、被考虑);自信,不卑微。" },
+  { id: "b35", cat: "self", level: "困难", title: "打开晋升对话", kp: ["VI-3"],
+    scenario: "年中 review 临近。你认为自己已按下一级别在交付;老板从未主动提过晋升。\n\n写下你在 1v1 里的开场几句。",
+    keyPoints: "考点:证据+提问,不是要求(\u201c这是我按那个级别交付的东西——您还需要看到什么?\u201d);索要地图和时间线;锁定一个具体的后续;不为开口道歉。" },
+];
+
+const LEVEL_STYLE = {
+  "简单": { color: GREEN, bg: "rgba(46,107,78,0.08)" },
+  "中等": { color: AMBER, bg: "rgba(169,118,28,0.10)" },
+  "困难": { color: RED, bg: "rgba(196,50,42,0.08)" },
+};
+
+/* 设计预览用的样例批改 */
+const MOCK_RESULT = {
+  score: 72,
+  verdict: "结构扎实、态度诚恳,但开场仍在道歉,而不是先给方案。",
+  dimensions: [
+    { name: "问题先行", score: 4, comment: "第一句就说出了问题本身——很好。" },
+    { name: "自带修复", score: 3, comment: "承诺了更正版,但没绑定时间。" },
+    { name: "情绪克制", score: 3, comment: "道歉出现两次;第二次消耗的是你的可信度。" },
+  ],
+  highlights: ["\u201c更正的那页已经在重做了\u201d——这句展示了担当而不带戏剧性。"],
+  issues: [
+    "\u201c真的非常抱歉,这完全是我的错\u201d——过度道歉把她的注意力花在你的愧疚上,而不是修复上。",
+    "更正版没有时间戳——\u201c尽快\u201d不是一个她可以据此安排的承诺。",
+  ],
+  better: "周四报告里有一页数据口径取错了——那页数字偏差约15%,客户还没发现。我已重做那一页,下午两点前给您更正版,赶在您的会前。建议向客户按主动数据更新来说。这次的疏漏抱歉——流程上我已加了一道发出前的口径检查。",
+  tip: "坏消息要么自带方案,要么只是把焦虑投递到别人桌上。",
+};
+
+/* ------------------------------------------------------------------ */
+/*  存储                                                                */
+/* ------------------------------------------------------------------ */
+const STORE_KEY = "drills-zh-ds-v1";
+
+function safeGet(key) {
+  try { return window.localStorage.getItem(key); } catch { return null; }
+}
+function safeSet(key, val) {
+  try { window.localStorage.setItem(key, val); return true; } catch { return false; }
+}
+
+async function loadStore() {
+  try {
+    const r = safeGet(STORE_KEY);
+    return r ? JSON.parse(r) : { records: {}, gen: {} };
+  } catch {
+    return { records: {}, gen: {} };
+  }
+}
+
+async function saveStore(store) {
+  safeSet(STORE_KEY, JSON.stringify(store));
+}
+
+/* ---- DeepSeek API key(仅保存在你自己的浏览器里) ---- */
+const KEY_STORAGE = "drills-ds-apikey";
+function getApiKey() { return safeGet(KEY_STORAGE) || ""; }
+function setApiKey(k) { safeSet(KEY_STORAGE, (k || "").trim()); }
+
+/* ------------------------------------------------------------------ */
+/*  API 调用                                                            */
+/* ------------------------------------------------------------------ */
+function extractJson(text) {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1) throw new Error("模型输出中没有找到 JSON");
+  return JSON.parse(text.slice(start, end + 1));
+}
+
+async function callLLMOnce(prompt) {
+  const key = getApiKey();
+  if (!key) throw new Error("还没有设置 API Key");
+  const response = await fetch("https://api.deepseek.com/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${key}`,
+    },
+    body: JSON.stringify({
+      model: "deepseek-chat",
+      max_tokens: 1200,
+      temperature: 0.4,
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  if (response.status === 401) throw new Error("API Key 无效或已过期(401)");
+  if (response.status === 402) throw new Error("DeepSeek 账户余额不足(402)");
+  if (response.status === 429) throw new Error("请求太频繁,稍等几秒再试(429)");
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message || "API 错误");
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error("API 返回为空");
+  return extractJson(text);
+}
+
+async function callClaude(prompt) {
+  try {
+    return await callLLMOnce(prompt);
+  } catch (e) {
+    if (/401|402|Key/.test(e.message)) throw e; // 配置类错误不重试
+    await new Promise((res) => setTimeout(res, 800));
+    return await callLLMOnce(prompt);
+  }
+}
+
+async function gradeAnswer(q, answer) {
+  const raw = await callClaude(`你是一位资深咨询顾问兼沟通教练,正在批改一道职场沟通练习。要求具体、诚实、有建设性——目标是成长,不是审判。每个字段都保持简洁。
+
+【场景】
+${q.scenario}
+
+【本题考点】
+${q.keyPoints}
+
+【学员的回答】
+${answer}
+
+只返回 JSON(不要任何其他文字、不要 markdown 代码块):
+{
+  "band": "档位,取值只能是: needs_work | solid | strong | excellent",
+  "verdict": "一句话总评,具体、成长导向",
+  "dimensions": [
+    {"name": "维度名(从考点提炼3个,尽量短)", "score": 0到5的整数, "comment": "一句点评,20字以内"}
+  ],
+  "highlights": ["做得好的点,1-2条,引用学员的原话片段"],
+  "issues": ["改进点,1-2条,各指向一个具体的句子,35字以内"],
+  "better": "基于学员的回答改写的更好版本,保留其中好的部分——长度与真实消息相当,不要更长",
+  "tip": "一条可迁移的原则,一句话"
+}
+档位校准:needs_work = 敷衍或偏离考点;solid = 扎实但有明确升级空间;strong = 结构和措辞都到位;excellent = 极少给,几乎无可挑剔。维度打分要敢于拉开差距:好就是5,一般就是3,缺失就是1。`);
+
+  // Deterministic score: band sets the range, dimension average sets the position within it.
+  const BANDS = { needs_work: [35, 59], solid: [60, 75], strong: [76, 88], excellent: [89, 97] };
+  const [lo, hi] = BANDS[raw.band] || BANDS.solid;
+  const dims = Array.isArray(raw.dimensions) ? raw.dimensions : [];
+  const avg = dims.length ? dims.reduce((a, d) => a + Math.max(0, Math.min(5, d.score || 0)), 0) / (dims.length * 5) : 0.5;
+  const score = Math.round(lo + (hi - lo) * avg);
+  return { ...raw, score };
+}
+
+async function generateQuestions(catKey, existingTitles) {
+  const cat = CATEGORIES[catKey];
+  const out = await callClaude(`你为咨询顾问和企业职场人设计沟通练习题。为分类「${cat.name}」(主题:${cat.desc})生成 3 道新题。
+
+规则:
+- 场景真实、具体(咨询/企业环境);学员必须写下他们真实会说或会发的话。
+- 一道简单、一道中等、一道困难。
+- 不得与以下已有题目重复:${existingTitles.join("; ")}
+- 每个场景以明确的写作指令结尾,如\u201c写下这条消息。\u201d或\u201c写下你会说的话。\u201d
+
+只返回 JSON(不要任何其他文字、不要 markdown 代码块):
+{
+  "questions": [
+    { "title": "短标题,4-8字", "level": "简单|中等|困难", "scenario": "情境,2-4句,以写作指令结尾", "keyPoints": "考点:3-4条具体的评分标准,分号分隔" }
+  ]
+}`);
+  return (out.questions || []).slice(0, 3).map((x, i) => ({
+    ...x,
+    id: `g-${catKey}-${Date.now()}-${i}`,
+    cat: catKey,
+    kp: [],
+    level: ["简单", "中等", "困难"].includes(x.level) ? x.level : "中等",
+  }));
+}
+
+/* ------------------------------------------------------------------ */
+/*  小组件                                                              */
+/* ------------------------------------------------------------------ */
+function ExamCard({ children, style, className, marginColor = RED_SOFT }) {
+  return (
+    <div className={className} style={{ background: CARD, border: `1px solid ${RULE}`, boxShadow: "0 1px 3px rgba(35,43,54,0.06)", position: "relative", ...style }}>
+      <div style={{ position: "absolute", top: 0, bottom: 0, left: 12, width: 1, background: marginColor }} />
+      <div style={{ paddingLeft: 24, paddingRight: 18, paddingTop: 18, paddingBottom: 18 }}>{children}</div>
+    </div>
+  );
+}
+
+function ScoreCircle({ score }) {
+  return (
+    <div style={{ position: "relative", width: 92, height: 92, flexShrink: 0 }}>
+      <div className="pen" style={{ position: "absolute", inset: 0, border: `3px solid ${RED}`, borderRadius: "50% 46% 52% 48% / 48% 52% 46% 52%" }} />
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", transform: "rotate(-4deg)" }}>
+        <span style={{ ...hand, fontSize: 42, color: RED, lineHeight: 1 }}>{score}</span>
+      </div>
+    </div>
+  );
+}
+
+function Dots({ n }) {
+  return (
+    <span style={{ ...mono, fontSize: 12, color: RED, letterSpacing: 2, whiteSpace: "nowrap" }}>
+      {"●".repeat(n)}
+      <span style={{ opacity: 0.35 }}>{"●".repeat(5 - n)}</span>
+    </span>
+  );
+}
+
+function ResultView({ result }) {
+  return (
+    <ExamCard>
+      <div style={{ display: "flex", gap: 18, alignItems: "center", borderBottom: `1px dashed ${RULE}`, paddingBottom: 18, flexWrap: "wrap" }}>
+        <ScoreCircle score={result.score} />
+        <p style={{ ...display, fontSize: 15.5, lineHeight: 1.7, margin: 0, color: INK, flex: 1, minWidth: 180 }}>{result.verdict}</p>
+      </div>
+      <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 14 }}>
+        {result.dimensions?.map((d, i) => (
+          <div key={i}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10 }}>
+              <span style={{ fontSize: 13.5, fontWeight: 600 }}>{d.name}</span>
+              <Dots n={Math.max(0, Math.min(5, d.score))} />
+            </div>
+            <p style={{ fontSize: 13, color: SUBINK, margin: "4px 0 0", lineHeight: 1.7 }}>{d.comment}</p>
+          </div>
+        ))}
+      </div>
+      {result.highlights?.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <h3 style={{ ...hand, fontSize: 22, margin: "0 0 4px", color: GREEN, transform: "rotate(-1deg)", fontWeight: 400 }}>做对了的 ✓</h3>
+          {result.highlights.map((h, i) => (
+            <p key={i} style={{ fontSize: 13.5, lineHeight: 1.8, margin: "4px 0", color: "#39434F" }}>· {h}</p>
+          ))}
+        </div>
+      )}
+      {result.issues?.length > 0 && (
+        <div style={{ marginTop: 16 }}>
+          <h3 style={{ ...hand, fontSize: 22, margin: "0 0 4px", color: RED, transform: "rotate(-1deg)", fontWeight: 400 }}>可以更好的</h3>
+          {result.issues.map((h, i) => (
+            <p key={i} style={{ fontSize: 13.5, lineHeight: 1.8, margin: "6px 0", color: "#39434F", borderLeft: `2px solid ${RED}`, paddingLeft: 10 }}>{h}</p>
+          ))}
+        </div>
+      )}
+      <div style={{ marginTop: 20, background: "#FBF8F1", border: `1px dashed #CFC8B6`, padding: "14px 16px" }}>
+        <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px" }}>参考改写</h3>
+        <p style={{ fontSize: 13.5, lineHeight: 1.85, margin: 0, whiteSpace: "pre-wrap", color: "#39434F" }}>{result.better}</p>
+      </div>
+      {result.tip && (
+        <p style={{ ...hand, marginTop: 16, fontSize: 21, color: SUBINK, lineHeight: 1.5, transform: "rotate(-0.5deg)" }}>→ {result.tip}</p>
+      )}
+    </ExamCard>
+  );
+}
+
+function ApiKeyPanel({ onDone }) {
+  const [val, setVal] = useState(getApiKey());
+  const save = () => { setApiKey(val); onDone(); };
+  return (
+    <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
+      <GlobalStyle />
+      <div style={{ maxWidth: 560, margin: "0 auto", padding: "48px 16px" }}>
+        <h1 style={{ ...display, fontSize: 24, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>连接 DeepSeek</h1>
+        <p style={{ fontSize: 13.5, lineHeight: 1.85, color: SUBINK, margin: "12px 0 0" }}>
+          批改和出题由 DeepSeek 完成,需要你自己的 API Key。到
+          <a href="https://platform.deepseek.com" target="_blank" rel="noreferrer" style={{ color: INK }}> platform.deepseek.com </a>
+          注册并创建一个 Key(以 sk- 开头),粘贴到下面。
+        </p>
+        <p style={{ fontSize: 12.5, lineHeight: 1.8, color: FAINT, margin: "8px 0 0" }}>
+          Key 只保存在你这台设备的浏览器里,不会上传到任何服务器。批改费用按 DeepSeek 的价格计入你自己的账户,一次批改通常不到一分钱。
+        </p>
+        <input
+          type="password"
+          value={val}
+          onChange={(e) => setVal(e.target.value)}
+          placeholder="sk-…"
+          style={{ width: "100%", boxSizing: "border-box", marginTop: 20, padding: "13px 14px", fontSize: 15, border: `1px solid ${RULE}`, background: CARD, ...mono, outline: "none", borderRadius: 0, WebkitAppearance: "none" }}
+        />
+        <button
+          onClick={save}
+          disabled={!val.trim().startsWith("sk-")}
+          style={{ marginTop: 12, width: "100%", minHeight: 50, background: val.trim().startsWith("sk-") ? INK : "#B9BFC9", color: "#FFF", border: "none", fontSize: 15, fontWeight: 600, cursor: "pointer", letterSpacing: 4, ...body }}
+        >
+          保存并开始
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  知识点页(中性配色)                                                  */
+/* ------------------------------------------------------------------ */
+function StudyNotes({ questions, onBack, onOpenQuestion }) {
+  return (
+    <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
+      <GlobalStyle />
+      <div style={{ maxWidth: 660, margin: "0 auto", padding: "18px 16px 64px" }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>
+          ← 返回题库
+        </button>
+
+        <header style={{ marginBottom: 22 }}>
+          <h1 style={{ ...display, fontSize: 24, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>知识点</h1>
+          <p style={{ margin: "8px 0 0", fontSize: 13.5, lineHeight: 1.75, color: SUBINK }}>
+            每道题背后的原则——附机制解释和一句拿来就能用的话。刷题前扫一眼,或单独当作复习卡片来读。
+          </p>
+          <div style={{ borderBottom: `3px double ${INK}`, marginTop: 14 }} />
+        </header>
+
+        {Object.entries(CATEGORIES).map(([key, cat]) => {
+          const points = KNOWLEDGE.filter((k) => k.cat === key);
+          return (
+            <section key={key} style={{ marginBottom: 30 }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
+                <span style={{ ...display, fontSize: 14, fontWeight: 700, color: SUBINK }}>{cat.num}·</span>
+                <h2 style={{ ...display, fontSize: 17, fontWeight: 700, margin: 0 }}>{cat.name}</h2>
+              </div>
+              <p style={{ ...hand, fontSize: 20, color: SUBINK, margin: "0 0 12px", paddingLeft: 24, transform: "rotate(-0.5deg)" }}>
+                {cat.desc}
+              </p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {points.map((k) => {
+                  const linked = questions.filter((q) => q.kp?.includes(k.id));
+                  return (
+                    <ExamCard key={k.id} marginColor={INK_SOFT} style={{ boxShadow: "none" }}>
+                      <h3 style={{ ...display, fontSize: 15, fontWeight: 700, margin: "0 0 6px" }}>{k.name}</h3>
+                      <p style={{ fontSize: 13, lineHeight: 1.8, margin: "0 0 8px", color: "#39434F" }}>{k.principle}</p>
+                      <p style={{ fontSize: 12.5, lineHeight: 1.75, margin: 0, color: SUBINK, background: "#F6F4ED", padding: "8px 10px", borderLeft: `2px solid ${INK_SOFT}` }}>
+                        {k.how}
+                      </p>
+                      {linked.length > 0 && (
+                        <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
+                          {linked.map((q) => (
+                            <button
+                              key={q.id}
+                              onClick={() => onOpenQuestion(q.id)}
+                              style={{ fontSize: 11.5, color: SUBINK, background: "none", border: `1px solid ${RULE}`, borderRadius: 999, padding: "4px 10px", cursor: "pointer", ...body }}
+                            >
+                              练:{q.title} →
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </ExamCard>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+
+        <p style={{ fontSize: 12, color: FAINT, lineHeight: 1.8, marginTop: 8 }}>
+          有两项能力基本活在书面练习之外:深度倾听,以及在对方开始感到不安全时实时修复对话。先读懂它们,然后到真实的对话里去练。
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  App                                                                */
+/* ------------------------------------------------------------------ */
+function App() {
+  const [view, setView] = useState("list");
+  const [activeId, setActiveId] = useState(null);
+  const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [store, setStore] = useState({ records: {}, gen: {} });
+  const [storeReady, setStoreReady] = useState(false);
+  const [genLoading, setGenLoading] = useState(null);
+  const [genError, setGenError] = useState(null);
+  const [hasKey, setHasKey] = useState(!!getApiKey());
+
+  useEffect(() => {
+    loadStore().then((s) => { setStore(s); setStoreReady(true); });
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") window.scrollTo(0, 0);
+  }, [view, result]);
+
+  const allQuestions = useMemo(() => {
+    const gen = Object.values(store.gen || {}).flat();
+    return [...BUILTIN, ...gen];
+  }, [store.gen]);
+
+  const q = allQuestions.find((x) => x.id === activeId);
+
+  const stats = useMemo(() => {
+    const scores = Object.values(store.records || {}).map((r) => r.best);
+    return {
+      done: scores.length,
+      avg: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null,
+    };
+  }, [store.records]);
+
+  const persist = (next) => { setStore(next); saveStore(next); };
+
+  const getAttempts = (id) => {
+    const rec = (store.records || {})[id];
+    if (!rec) return [];
+    if (rec.attempts) return rec.attempts;
+    if (rec.lastResult) return [{ answer: rec.lastAnswer, result: rec.lastResult, ts: rec.ts }];
+    return [];
+  };
+
+  const openQuestion = (id) => {
+    const attempts = getAttempts(id);
+    const last = attempts[attempts.length - 1];
+    setActiveId(id);
+    setAnswer(last?.answer || "");
+    setResult(null);
+    setError(null);
+    setView("question");
+  };
+
+  const submit = async () => {
+    if (!answer.trim() || loading) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const r = await gradeAnswer(q, answer);
+      setResult(r);
+      const prev = (store.records || {})[q.id] || {};
+      const history = prev.attempts
+        ? [...prev.attempts]
+        : prev.lastResult
+          ? [{ answer: prev.lastAnswer, result: prev.lastResult, ts: prev.ts }]
+          : [];
+      history.push({ answer, result: r, ts: Date.now() });
+      const attempts = history.slice(-30);
+      persist({
+        ...store,
+        records: { ...store.records, [q.id]: { best: Math.max(prev.best || 0, r.score), attempts } },
+      });
+    } catch (e) {
+      setError(`批改失败:${e.message || "未知错误"}。请再试一次。`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshCategory = async (catKey) => {
+    if (genLoading) return;
+    setGenLoading(catKey);
+    setGenError(null);
+    try {
+      const existing = allQuestions.filter((x) => x.cat === catKey).map((x) => x.title);
+      const fresh = await generateQuestions(catKey, existing);
+      if (!fresh.length) throw new Error("empty");
+      persist({ ...store, gen: { ...store.gen, [catKey]: fresh } });
+    } catch (e) {
+      setGenError(catKey);
+    } finally {
+      setGenLoading(null);
+    }
+  };
+
+  if (!hasKey) {
+    return <ApiKeyPanel onDone={() => setHasKey(true)} />;
+  }
+
+  /* ---------------- 知识点 ---------------- */
+  if (view === "notes") {
+    return <StudyNotes questions={allQuestions} onBack={() => setView("list")} onOpenQuestion={openQuestion} />;
+  }
+
+  /* ---------------- 设计预览 ---------------- */
+  if (view === "preview") {
+    return (
+      <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
+        <GlobalStyle />
+        <div style={{ maxWidth: 660, margin: "0 auto", padding: "18px 16px 64px" }}>
+          <button onClick={() => setView("list")} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>
+            ← 返回题库
+          </button>
+          <p style={{ ...mono, fontSize: 11.5, color: FAINT, margin: "0 0 12px" }}>设计预览 · 批改页样例数据</p>
+          <div className="rise">
+            <ResultView result={MOCK_RESULT} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------------- 题库 ---------------- */
+  if (view === "list") {
+    return (
+      <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
+        <GlobalStyle />
+        <div style={{ maxWidth: 660, margin: "0 auto", padding: "32px 16px 64px" }}>
+          <header style={{ marginBottom: 8 }}>
+            <h1 style={{ ...display, fontSize: 27, fontWeight: 700, margin: 0, lineHeight: 1.3, letterSpacing: "0.01em" }}>
+              职场沟通题库
+            </h1>
+            <p style={{ margin: "12px 0 0", fontSize: 14, lineHeight: 1.75, color: SUBINK, maxWidth: 460 }}>
+              像刷 LeetCode 一样刷沟通题。写下你真实会说的话——AI 红笔批改。
+            </p>
+            <p style={{ ...mono, fontSize: 11.5, color: FAINT, margin: "12px 0 0" }}>
+              已练 {stats.done}/{allQuestions.length}{stats.avg !== null ? ` · 平均 ${stats.avg} 分` : ""} · 进度保存在本设备
+            </p>
+            <div style={{ borderBottom: `3px double ${INK}`, marginTop: 16 }} />
+          </header>
+
+          <button
+            onClick={() => setView("notes")}
+            style={{
+              display: "flex", alignItems: "center", gap: 12,
+              width: "100%", textAlign: "left", marginTop: 18,
+              background: CARD, border: `1px solid ${RULE}`,
+              borderLeft: `3px solid ${INK}`,
+              padding: "14px 16px", cursor: "pointer",
+              boxShadow: "0 1px 2px rgba(35,43,54,0.05)",
+            }}
+          >
+            <span style={{ ...hand, fontSize: 24, color: INK, flexShrink: 0, transform: "rotate(-3deg)" }}>笔记</span>
+            <span style={{ flex: 1 }}>
+              <span style={{ display: "block", fontSize: 14, fontWeight: 600 }}>知识点</span>
+              <span style={{ display: "block", fontSize: 12.5, color: SUBINK, marginTop: 2 }}>
+                每道题背后的原则——附拿来就能用的话术
+              </span>
+            </span>
+            <span style={{ color: FAINT, fontSize: 16 }}>→</span>
+          </button>
+
+          {Object.entries(CATEGORIES).map(([key, cat]) => {
+            const items = allQuestions.filter((x) => x.cat === key);
+            const isGen = genLoading === key;
+            return (
+              <section key={key} style={{ marginTop: 30 }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
+                  <span style={{ ...display, fontSize: 14, fontWeight: 700, color: RED }}>{cat.num}·</span>
+                  <h2 style={{ ...display, fontSize: 18, fontWeight: 700, margin: 0, flex: 1 }}>{cat.name}</h2>
+                  <button
+                    onClick={() => refreshCategory(key)}
+                    disabled={!!genLoading || !storeReady}
+                    style={{ fontSize: 12, color: isGen ? FAINT : SUBINK, background: "none", border: `1px solid ${RULE}`, borderRadius: 999, padding: "5px 12px", cursor: isGen ? "wait" : "pointer", ...body }}
+                  >
+                    {isGen ? "出题中…" : "+ 换一批新题"}
+                  </button>
+                </div>
+                <p style={{ fontSize: 12.5, color: FAINT, margin: "4px 0 12px", paddingLeft: 24 }}>{cat.desc}</p>
+                {genError === key && (
+                  <p style={{ fontSize: 12.5, color: RED, margin: "0 0 10px", paddingLeft: 24 }}>出题失败——请再试一次。</p>
+                )}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {items.map((item, idx) => {
+                    const lv = LEVEL_STYLE[item.level];
+                    const rec = (store.records || {})[item.id];
+                    const isNew = String(item.id).startsWith("g-");
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => openQuestion(item.id)}
+                        style={{
+                          display: "flex", alignItems: "center", gap: 10,
+                          textAlign: "left", width: "100%", minHeight: 54,
+                          background: CARD, border: `1px solid ${RULE}`,
+                          padding: "12px 14px", cursor: "pointer",
+                          boxShadow: "0 1px 2px rgba(35,43,54,0.05)",
+                          position: "relative",
+                        }}
+                      >
+                        {rec && (
+                          <span style={{ ...hand, position: "absolute", right: 76, top: -5, fontSize: 20, color: RED, transform: "rotate(-5deg)", pointerEvents: "none" }}>
+                            {rec.best}
+                          </span>
+                        )}
+                        <span style={{ ...mono, fontSize: 12, color: FAINT, width: 20, flexShrink: 0 }}>{String(idx + 1).padStart(2, "0")}</span>
+                        <span style={{ flex: 1, fontSize: 14.5, fontWeight: 500, lineHeight: 1.5 }}>
+                          {item.title}
+                          {isNew && <span style={{ ...hand, fontSize: 17, color: RED, marginLeft: 8 }}>新</span>}
+                        </span>
+                        <span style={{ fontSize: 11.5, color: lv.color, background: lv.bg, padding: "4px 9px", borderRadius: 999, flexShrink: 0, ...body }}>
+                          {item.level}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+
+          <p style={{ marginTop: 44, fontSize: 11.5, color: FAINT, textAlign: "center" }}>
+            答案与批改只保存在本设备浏览器 · 原型版 ·{" "}
+            <button onClick={() => { setHasKey(false); }} style={{ background: "none", border: "none", color: FAINT, fontSize: 11.5, textDecoration: "underline", cursor: "pointer", padding: 0, ...body }}>
+              API Key
+            </button>{" "}·{" "}
+            <button onClick={() => setView("preview")} style={{ background: "none", border: "none", color: FAINT, fontSize: 11.5, textDecoration: "underline", cursor: "pointer", padding: 0, ...body }}>
+              设计预览
+            </button>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ---------------- 题目 ---------------- */
+  const lv = LEVEL_STYLE[q.level];
+  const rec = (store.records || {})[q.id];
+  const attempts = getAttempts(q.id);
+  const linkedKp = KNOWLEDGE.filter((k) => q.kp?.includes(k.id));
+  return (
+    <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
+      <GlobalStyle />
+      <div style={{ maxWidth: 660, margin: "0 auto", padding: "18px 16px 64px" }}>
+        <button onClick={() => setView("list")} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>
+          ← 返回题库
+        </button>
+
+        <ExamCard className="rise">
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
+            <span style={{ ...display, fontSize: 13, color: FAINT }}>{CATEGORIES[q.cat].num}</span>
+            <span style={{ fontSize: 11.5, color: lv.color, background: lv.bg, padding: "3px 8px", borderRadius: 999, ...body }}>
+              {q.level}
+            </span>
+            {rec && (
+              <span style={{ ...hand, fontSize: 19, color: RED, transform: "rotate(-2deg)" }}>最高 {rec.best}</span>
+            )}
+          </div>
+          <h1 style={{ ...display, fontSize: 21, fontWeight: 700, margin: "0 0 12px", lineHeight: 1.4 }}>{q.title}</h1>
+          <p style={{ fontSize: 14.5, lineHeight: 1.85, whiteSpace: "pre-wrap", margin: 0, color: "#39434F" }}>{q.scenario}</p>
+          {linkedKp.length > 0 && (
+            <p style={{ fontSize: 11.5, color: FAINT, margin: "12px 0 0", ...body }}>
+              考察:{linkedKp.map((k) => k.name).join(" · ")}
+            </p>
+          )}
+        </ExamCard>
+
+        {!result && (
+          <div style={{ marginTop: 14 }}>
+            <textarea
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              placeholder="写下你真实会说的话——不是标准答案,是你会发出去的那条消息。"
+              rows={7}
+              style={{
+                width: "100%", boxSizing: "border-box",
+                background: CARD, border: `1px solid ${RULE}`,
+                padding: "14px", fontSize: 16, lineHeight: 1.8, ...body, color: INK,
+                resize: "vertical", outline: "none", borderRadius: 0, WebkitAppearance: "none",
+              }}
+            />
+            {error && <p style={{ color: RED, fontSize: 13, marginTop: 8 }}>{error}</p>}
+            <button
+              onClick={submit}
+              disabled={loading || !answer.trim()}
+              style={{
+                marginTop: 12, width: "100%", minHeight: 50,
+                background: loading || !answer.trim() ? "#B9BFC9" : INK,
+                color: "#FFF", border: "none", padding: "14px",
+                fontSize: 15, fontWeight: 600, cursor: loading ? "wait" : "pointer",
+                letterSpacing: 4, ...body,
+              }}
+            >
+              {loading ? "批改中…" : "提交批改"}
+            </button>
+            {loading && <p style={{ fontSize: 12.5, color: FAINT, textAlign: "center", marginTop: 10 }}>通常只需几秒</p>}
+            {!loading && attempts.length > 0 && (
+              <div style={{ marginTop: 14 }}>
+                <p style={{ ...mono, fontSize: 11, color: FAINT, margin: "0 0 6px", letterSpacing: 0.5 }}>
+                  历史作答({attempts.length})
+                </p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {[...attempts].reverse().map((a, i) => (
+                    <button
+                      key={a.ts || i}
+                      onClick={() => { setAnswer(a.answer || ""); setResult(a.result); }}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 10,
+                        width: "100%", textAlign: "left", minHeight: 44,
+                        background: "none", border: `1px dashed ${RULE}`,
+                        padding: "9px 12px", cursor: "pointer", ...body,
+                      }}
+                    >
+                      <span style={{ ...hand, fontSize: 19, color: RED, width: 34, flexShrink: 0, transform: "rotate(-3deg)" }}>
+                        {a.result?.score}
+                      </span>
+                      <span style={{ flex: 1, fontSize: 12.5, color: SUBINK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {(a.answer || "").slice(0, 40)}
+                      </span>
+                      <span style={{ ...mono, fontSize: 10.5, color: FAINT, flexShrink: 0 }}>
+                        {a.ts ? new Date(a.ts).toLocaleDateString() : ""}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {result && (
+          <div style={{ marginTop: 16 }} className="rise">
+            <ResultView result={result} />
+            <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+              <button
+                onClick={() => { setResult(null); setError(null); }}
+                style={{ flex: 1, minHeight: 48, background: CARD, border: `1.5px solid ${INK}`, color: INK, padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", ...body }}
+              >
+                再答一次
+              </button>
+              <button
+                onClick={() => setView("list")}
+                style={{ flex: 1, minHeight: 48, background: INK, border: "none", color: "#FFF", padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", ...body }}
+              >
+                下一题 →
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+</script>
+</body>
+</html>
