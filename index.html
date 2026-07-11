@@ -522,7 +522,7 @@ async function callLLMOnce(prompt) {
   if (response.status === 429) throw new Error("rate limited (429)");
   const dataR = await response.json();
   if (dataR.error) throw new Error(dataR.error.message || "API error");
-  const text = dataR.choices?.[0]?.message?.content;
+  const msg = dataR.choices?.[0]?.message; const text = msg?.content || msg?.reasoning_content;
   if (!text) throw new Error("empty API response");
   return extractJson(text);
 }
