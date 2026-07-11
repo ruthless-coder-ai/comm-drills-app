@@ -848,10 +848,11 @@ function App() {
   };
 
   const LangToggle = () => (
-    <div style={{ display: "flex", gap: 6 }}>
+    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
       {[["zh", "中文"], ["en", "EN"]].map(([l, label]) => (
         <button key={l} onClick={() => switchLang(l)}
           style={{ ...mono, fontSize: 12, padding: "5px 12px", borderRadius: 999, cursor: "pointer",
+            whiteSpace: "nowrap", flexShrink: 0,
             border: `1.5px solid ${lang === l ? INK : RULE}`,
             background: lang === l ? INK : "transparent", color: lang === l ? "#FFF" : SUBINK }}>
           {label}
