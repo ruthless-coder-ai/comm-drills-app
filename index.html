@@ -987,7 +987,7 @@ function App() {
           </div>
           <h1 style={{ ...display, fontSize: 21, fontWeight: 700, margin: "0 0 12px", lineHeight: 1.35 }}>{q.title}</h1>
           <p style={{ fontSize: 14.5, lineHeight: 1.8, whiteSpace: "pre-wrap", margin: 0, color: "#39434F" }}>{q.scenario}</p>
-          {linkedKp.length > 0 && (
+          {linkedKp.length > 0 && result && (
             <p style={{ fontSize: 11.5, color: FAINT, margin: "12px 0 0", ...body }}>{t.tests}{linkedKp.map((k) => k.name).join(" · ")}</p>
           )}
         </ExamCard>
