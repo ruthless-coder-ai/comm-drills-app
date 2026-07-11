@@ -498,13 +498,12 @@ function ApiKeyPanel({ onDone }) {
           type="text"
           value={val}
           onChange={(e) => setVal(e.target.value)}
-          placeholder="访问口令"
+          placeholder="口令(没有可留空)"
           style={{ width: "100%", boxSizing: "border-box", marginTop: 20, padding: "13px 14px", fontSize: 15, border: `1px solid ${RULE}`, background: CARD, ...mono, outline: "none", borderRadius: 0, WebkitAppearance: "none" }}
         />
         <button
           onClick={save}
-          disabled={!val.trim()}
-          style={{ marginTop: 12, width: "100%", minHeight: 50, background: val.trim() ? INK : "#B9BFC9", color: "#FFF", border: "none", fontSize: 15, fontWeight: 600, cursor: "pointer", letterSpacing: 4, ...body }}
+          style={{ marginTop: 12, width: "100%", minHeight: 50, background: INK, color: "#FFF", border: "none", fontSize: 15, fontWeight: 600, cursor: "pointer", letterSpacing: 4, ...body }}
         >
           开始刷题
         </button>
@@ -597,7 +596,7 @@ function App() {
   const [storeReady, setStoreReady] = useState(false);
   const [genLoading, setGenLoading] = useState(null);
   const [genError, setGenError] = useState(null);
-  const [hasKey, setHasKey] = useState(hasEntered());
+  const [hasKey, setHasKey] = useState(true);
 
   useEffect(() => {
     loadStore().then((s) => { setStore(s); setStoreReady(true); });
