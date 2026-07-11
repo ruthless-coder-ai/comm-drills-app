@@ -517,7 +517,7 @@ async function callLLMOnce(prompt) {
   const response = await fetch("https://drills-proxy.abitai2026.workers.dev", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ max_tokens: 1200, messages: [{ role: "user", content: prompt }] }),
+    body: JSON.stringify({ max_tokens: 900, messages: [{ role: "user", content: prompt }] }),
   });
   if (response.status === 429) throw new Error("rate limited (429)");
   const dataR = await response.json();
@@ -560,11 +560,11 @@ ${answer}
 只返回 JSON(不要任何其他文字、不要 markdown 代码块):
 {
   "band": "档位,取值只能是: needs_work | solid | strong | excellent",
-  "verdict": "一句话总评,具体、成长导向",
+  "verdict": "一句话总评,先肯定再升级,30字以内",
   "dimensions": [ {"name": "维度名(从考点提炼3个,尽量短)", "score": 0到5的整数, "comment": "一句点评,20字以内"} ],
-  "highlights": ["做得好的点,1-2条,引用学员的原话片段"],
+  "highlights": ["做得好的点,1-2条,引用原话片段,每条25字以内"],
   "issues": ["改进点,1-2条,各指向一个具体的句子,35字以内"],
-  "better": "基于学员的回答改写的更好版本,保留其中好的部分——长度与真实消息相当,不要更长",
+  "better": "基于学员回答的改写,保留好的部分——不得长于学员的原答案,能删则删",
   "tip": "一条可迁移的原则,一句话"
 }
 档位校准:needs_work = 敷衍或偏离考点;solid = 基本合格但缺了某个关键动作;strong = 关键动作齐全、结构清晰、没有硬伤——措辞还能更好不妨碍进入 strong;excellent = 几乎无可挑剔,偶尔要舍得给。solid 不是默认的安全选项:该给 strong 就给 strong。维度打分敢于拉开差距:好就是5,一般就是3,缺失就是1。`;
@@ -596,11 +596,11 @@ ${answer}
 Return ONLY JSON (no other text, no markdown fences):
 {
   "band": "one of: needs_work | solid | strong | excellent",
-  "verdict": "one short sentence, specific, growth-framed",
+  "verdict": "one sentence: affirm first, then the upgrade — max 20 words",
   "dimensions": [ {"name": "short dimension name (derive 3 from key points)", "score": integer 0-5, "comment": "one short remark, max 15 words"} ],
   "highlights": ["1-2 things done well, quoting short fragments of the learner's words"],
   "issues": ["1-2 improvement areas, each pointing to a specific phrase, max 25 words each"],
-  "better": "a stronger version rewritten from the learner's answer, keeping what worked — same length as a real message",
+  "better": "a rewrite of the learner's answer keeping what worked — no longer than their original; cut where possible",
   "tip": "one transferable principle, one short sentence"
 }
 Band calibration: needs_work = minimal effort or off-target; solid = passable but missing a key move; strong = key moves all present, clear structure, no real flaws — wording that could be polished further does NOT block strong; excellent = near-flawless, and do award it occasionally. solid is not the default safe pick: when strong is earned, give strong. Spread dimension scores honestly: good = 5, average = 3, missing = 1.`;
