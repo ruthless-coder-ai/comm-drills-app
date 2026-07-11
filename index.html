@@ -31,7 +31,7 @@ const AMBER = "#A9761C";
 const RULE = "#E2DDD0";
 
 const display = { fontFamily: '"Noto Serif SC", "Songti SC", "SimSun", serif' };
-const hand = { fontFamily: '"Ma Shan Zheng", "Kaiti SC", "KaiTi", cursive' };
+const hand = { fontFamily: '"Zhi Mang Xing", "Kaiti SC", "KaiTi", cursive' };
 const body = { fontFamily: '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif' };
 const mono = { fontFamily: '"IBM Plex Mono", "SF Mono", Menlo, monospace' };
 
@@ -44,7 +44,7 @@ const gridBg = {
 function GlobalStyle() {
   return (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&family=Ma+Shan+Zheng&family=IBM+Plex+Mono:wght@400;500&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&family=Zhi+Mang+Xing&family=IBM+Plex+Mono:wght@400;500&display=swap');
       * { -webkit-tap-highlight-color: transparent; }
       button { touch-action: manipulation; }
       button:focus-visible, textarea:focus-visible { outline: 2px solid ${INK}; outline-offset: 2px; }
@@ -442,7 +442,7 @@ function Dots({ n }) {
   );
 }
 
-function ResultView({ result }) {
+function ResultView({ result, original }) {
   return (
     <ExamCard>
       <div style={{ display: "flex", gap: 18, alignItems: "center", borderBottom: `1px dashed ${RULE}`, paddingBottom: 18, flexWrap: "wrap" }}>
@@ -480,6 +480,12 @@ function ResultView({ result }) {
         <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px" }}>参考改写</h3>
         <p style={{ fontSize: 13.5, lineHeight: 1.85, margin: 0, whiteSpace: "pre-wrap", color: "#39434F" }}>{result.better}</p>
       </div>
+      {original && (
+        <div style={{ marginTop: 12, border: `1px dashed ${RULE}`, padding: "14px 16px" }}>
+          <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px", color: SUBINK }}>你的原稿</h3>
+          <p style={{ fontSize: 13.5, lineHeight: 1.85, margin: 0, whiteSpace: "pre-wrap", color: SUBINK }}>{original}</p>
+        </div>
+      )}
       {result.tip && (
         <p style={{ ...hand, marginTop: 16, fontSize: 21, color: SUBINK, lineHeight: 1.5, transform: "rotate(-0.5deg)" }}>→ {result.tip}</p>
       )}
@@ -928,7 +934,7 @@ function App() {
 
         {result && (
           <div style={{ marginTop: 16 }} className="rise">
-            <ResultView result={result} />
+            <ResultView result={result} original={answer} />
             <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
               <button
                 onClick={() => { setResult(null); setError(null); }}
