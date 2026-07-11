@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>职场沟通题库</title>
+<title>职场沟通题库 · Workplace Communication Drills</title>
 <style>html,body{margin:0;padding:0;background:#F8F5EE;}</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -12,39 +13,28 @@
 <body>
 <div id="root"></div>
 <script type="text/babel" data-presets="react">
+
 const { useState, useMemo, useEffect } = React;
 
-/* ------------------------------------------------------------------ */
-/*  设计变量                                                            */
-/* ------------------------------------------------------------------ */
-const PAPER = "#F8F5EE";
-const CARD = "#FFFFFF";
-const INK = "#232B36";
-const SUBINK = "#5A6472";
-const FAINT = "#8F98A6";
-const GRID = "rgba(140,160,185,0.14)";
-const RED = "#C4322A";
-const RED_SOFT = "rgba(196,50,42,0.32)";
-const INK_SOFT = "rgba(35,43,54,0.25)";
-const GREEN = "#2E6B4E";
-const AMBER = "#A9761C";
-const RULE = "#E2DDD0";
+/* ---------- tokens ---------- */
+const PAPER = "#F8F5EE"; const CARD = "#FFFFFF"; const INK = "#232B36";
+const SUBINK = "#5A6472"; const FAINT = "#8F98A6"; const GRID = "rgba(140,160,185,0.14)";
+const RED = "#C4322A"; const RED_SOFT = "rgba(196,50,42,0.32)"; const INK_SOFT = "rgba(35,43,54,0.25)";
+const GREEN = "#2E6B4E"; const AMBER = "#A9761C"; const RULE = "#E2DDD0";
 
-const display = { fontFamily: '"Noto Serif SC", "Songti SC", "SimSun", serif' };
-const hand = { fontFamily: '"Kaiti SC", "KaiTi", "STKaiti", "楷体", serif' };
-const body = { fontFamily: '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif' };
+const display = { fontFamily: '"Fraunces", "Noto Serif SC", "Songti SC", "SimSun", serif' };
+const hand = { fontFamily: '"Caveat", "LXGW WenKai", "Kaiti SC", "STKaiti", "楷体", cursive' };
+const body = { fontFamily: '"Inter", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif' };
 const mono = { fontFamily: '"IBM Plex Mono", "SF Mono", Menlo, monospace' };
 
-const gridBg = {
-  backgroundColor: PAPER,
+const gridBg = { backgroundColor: PAPER,
   backgroundImage: `linear-gradient(${GRID} 1px, transparent 1px), linear-gradient(90deg, ${GRID} 1px, transparent 1px)`,
-  backgroundSize: "28px 28px",
-};
+  backgroundSize: "28px 28px" };
 
 function GlobalStyle() {
   return (
     <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Caveat:wght@600;700&family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
       * { -webkit-tap-highlight-color: transparent; }
       button { touch-action: manipulation; }
       button:focus-visible, textarea:focus-visible { outline: 2px solid ${INK}; outline-offset: 2px; }
@@ -58,10 +48,8 @@ function GlobalStyle() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  分类                                                                */
-/* ------------------------------------------------------------------ */
-const CATEGORIES = {
+/* ---------- data (zh + en) ---------- */
+const CATS_ZH = {
   up: { num: "一", name: "向上沟通", desc: "对方要的是确定性,不是你的内心过程" },
   capacity: { num: "二", name: "承诺与容量", desc: "你的估算和精力都有硬上限" },
   pressure: { num: "三", name: "高压表现", desc: "为最差状态的自己做冗余设计" },
@@ -70,10 +58,7 @@ const CATEGORIES = {
   self: { num: "六", name: "为自己发声", desc: "机会看不见你,就选不到你" },
 };
 
-/* ------------------------------------------------------------------ */
-/*  知识点库                                                            */
-/* ------------------------------------------------------------------ */
-const KNOWLEDGE = [
+const KPS_ZH = [
   // 一 · 向上沟通
   { id: "I-1", cat: "up", name: "确定性优先", principle: "收到反馈或指令时,对方需要知道的是\u201c这事被接住了\u201d,不是它的历史成因。", how: "\u201c明白。接下来我会做:A、B、C。\u201d不解释来龙去脉,道歉最多一次。" },
   { id: "I-2", cat: "up", name: "坏消息自带方案", principle: "问题第一时间上报,第一句直说问题本身,同一口气带上影响评估和修复计划。", how: "\u201c周四报告有一页口径取错,偏差约15%。更正版下午两点前给您,建议向客户按主动数据更新来说。\u201d" },
@@ -122,10 +107,7 @@ const KNOWLEDGE = [
   { id: "VI-5", cat: "self", name: "给自己的版本留档", principle: "你的现实不需要谁的签字才成立。安静地记工作日志——证据安放无力感,偶尔还赢下长局。", how: "日期、交付物、关键邮件。不为对质,为脚下有地。" },
 ];
 
-/* ------------------------------------------------------------------ */
-/*  题库(35 题)                                                        */
-/* ------------------------------------------------------------------ */
-const BUILTIN = [
+const QS_ZH = [
   // 一 · 向上沟通(10)
   { id: "b1", cat: "up", level: "简单", title: "接住一条反馈", kp: ["I-1"],
     scenario: "1v1 里,老板对你说:\u201c你上次发给客户的分析,结论埋得太深,客户找了半天才看到重点。\u201d\n\n你怎么回?写下你真实会说的话。",
@@ -244,14 +226,7 @@ const BUILTIN = [
     keyPoints: "考点:证据+提问,不是要求(\u201c这是我按那个级别交付的东西——您还需要看到什么?\u201d);索要地图和时间线;锁定一个具体的后续;不为开口道歉。" },
 ];
 
-const LEVEL_STYLE = {
-  "简单": { color: GREEN, bg: "rgba(46,107,78,0.08)" },
-  "中等": { color: AMBER, bg: "rgba(169,118,28,0.10)" },
-  "困难": { color: RED, bg: "rgba(196,50,42,0.08)" },
-};
-
-/* 设计预览用的样例批改 */
-const MOCK_RESULT = {
+const MOCK_ZH = {
   score: 72,
   verdict: "结构扎实、态度诚恳,但开场仍在道歉,而不是先给方案。",
   dimensions: [
@@ -268,83 +243,297 @@ const MOCK_RESULT = {
   tip: "坏消息要么自带方案,要么只是把焦虑投递到别人桌上。",
 };
 
-/* ------------------------------------------------------------------ */
-/*  存储                                                                */
-/* ------------------------------------------------------------------ */
-const STORE_KEY = "drills-zh-ds-v1";
+const CATS_EN = {
+  up: { num: "I", name: "Managing Up", desc: "They want certainty, not your inner process" },
+  capacity: { num: "II", name: "Commitments & Capacity", desc: "Your estimates and energy have hard limits" },
+  pressure: { num: "III", name: "Performing Under Pressure", desc: "Design redundancy for your worst-state self" },
+  client: { num: "IV", name: "Client Communication", desc: "It's not enough to be right — you must be helpful" },
+  peers: { num: "V", name: "Peers, Juniors & Third Parties", desc: "Without authority, shared goals do the work" },
+  self: { num: "VI", name: "Advocating for Yourself", desc: "Opportunities can't choose you if they can't see you" },
+};
 
-function safeGet(key) {
-  try { return window.localStorage.getItem(key); } catch { return null; }
-}
-function safeSet(key, val) {
-  try { window.localStorage.setItem(key, val); return true; } catch { return false; }
-}
+const KPS_EN = [
+  // I — Managing Up
+  { id: "I-1", cat: "up", name: "Certainty first", principle: "When you receive feedback or a request, they need to know it's handled — not your backstory.", how: "“Got it. Here's what I'll change: A, B, C.” No history, one apology max." },
+  { id: "I-2", cat: "up", name: "Bad news carries its own fix", principle: "Report problems immediately, lead with the issue, attach impact and a plan in the same breath.", how: "“One page in Thursday's report used the wrong definition — off by 15%. Corrected version by 2pm; suggest we frame it as a data refresh.”" },
+  { id: "I-3", cat: "up", name: "Make your process visible", principle: "Misunderstandings grow in information vacuums. A steady stream of done / found / next means complaints land on context, not on silence.", how: "A short weekly note; risks flagged before they blow up, not after." },
+  { id: "I-4", cat: "up", name: "Label your intent", principle: "Say why you're about to say something — it prevents your action from being misread.", how: "“One premise worth aligning on, because it affects the conclusion: …”" },
+  { id: "I-5", cat: "up", name: "Align, don't appeal", principle: "When you're corrected wrongly, bring evidence framed as information alignment, not as winning a case. Leave a graceful exit.", how: "“The point I added maps to the first item in their email (attached) — maybe we read it from different angles?”" },
+  { id: "I-6", cat: "up", name: "Feedback flows up too", principle: "You can give your manager feedback — tie it to their goals, and ask what kind of feedback they find useful before offering it.", how: "“Something that might help with X — open to a quick observation from my seat?”" },
+  { id: "I-7", cat: "up", name: "Two bosses, one truth", principle: "With multiple managers, never privately absorb their conflicting demands — make the conflict visible and let them resolve priority.", how: "“A and B both land Friday and I can deliver one well. Could you two align on which leads?”" },
+  { id: "I-8", cat: "up", name: "Ask with your homework attached", principle: "Questions signal competence when they carry your research and your best guess.", how: "“I've checked X and Y; my read is Z — am I on the right track?”" },
+  // II — Commitments & Capacity
+  { id: "II-1", cat: "capacity", name: "Multiply by your own history", principle: "Everyone's estimates are systematically optimistic. Use your personal correction factor (×2 if that's your track record) — and say that number out loud.", how: "Before quoting, ask: which night's sleep pays for the number I'm about to shave off?" },
+  { id: "II-2", cat: "capacity", name: "Never commit on the spot", principle: "Most overcommitment happens live, under social pressure. Buy a beat.", how: "“Let me check my plate — I'll confirm by end of day.”" },
+  { id: "II-3", cat: "capacity", name: "Translate “no” into a trade-off", principle: "You rarely need to refuse; you need to make your capacity transparent and hand the priority call back.", how: "“I can — but then X or Y moves. Which takes priority?”" },
+  { id: "II-4", cat: "capacity", name: "Renegotiate early", principle: "Tuesday's revised promise beats Thursday's surprise. One honest sentence on why; a new, specific commitment.", how: "“Data cleaning is messier than scoped. Options: rough version Thursday + final Friday, or final Friday. Your call.”" },
+  { id: "II-5", cat: "capacity", name: "Quote long, deliver early", principle: "A longer timeline delivered early reads as reliable; a flattering one delivered late reads as slipping. Same hours, different story.", how: "Report the ×2 number; arrive under it." },
+  { id: "II-6", cat: "capacity", name: "Protect your recovery", principle: "Rest is capacity planning, not weakness. Handovers should be so complete that no one needs to reach you.", how: "Name a deputy, list open items with owners, state when you're back — and don't apologize for leaving." },
+  // III — Performing Under Pressure
+  { id: "III-1", cat: "pressure", name: "Over-learn the openings", principle: "Nerves eat improvisation first. Drill the first two lines, each section's first line, and the close until they survive your worst state.", how: "If the opening lands automatically, physiology settles and the middle takes care of itself." },
+  { id: "III-2", cat: "pressure", name: "Receive before you respond", principle: "When challenged, a buffer line plus honest acknowledgment beats instant defense.", how: "“Fair challenge — the sample is small. Here's what supports the direction beyond it, and I'll send the full basis after this session.”" },
+  { id: "III-3", cat: "pressure", name: "Pre-plan your recovery move", principle: "The damage isn't the blank — it's the panic after. Decide in advance what you'll say when you lose the thread.", how: "“Let me take that from another angle.” Or: pause, sip water, restart the sentence." },
+  { id: "III-4", cat: "pressure", name: "Shrink the stakes", principle: "“Prove myself” is an unbounded task that frightens the brain. Give each performance one small concrete goal.", how: "“Get the conclusions page across clearly.” That's the whole job today." },
+  { id: "III-5", cat: "pressure", name: "Negotiate your cognitive load", principle: "Content + tech + room control is an overloaded configuration; unstable performance under it is physics, not character.", how: "“I'll present section X — could someone own the deck and the dial-in?”" },
+  { id: "III-6", cat: "pressure", name: "Structured improv", principle: "Called on without an opinion? Observation → tentative read → what you'd verify. Label it as initial.", how: "“What I've seen so far is X; my initial read is Y; before committing I'd check Z.”" },
+  { id: "III-7", cat: "pressure", name: "“I don't know”, professionally", principle: "Owning a gap with a follow-up commitment builds more trust than improvised filler.", how: "“I don't want to guess on this one — I'll confirm and send it to you by tomorrow noon.”" },
+  // IV — Client Communication
+  { id: "IV-1", cat: "client", name: "Answer what they care about first", principle: "Conclusion-first, decision-relevant first — never mechanically in the order asked.", how: "Open with their top concern; fold the rest in behind it." },
+  { id: "IV-2", cat: "client", name: "Fold clarifications into the story", principle: "Corrections serve the conclusions; deliver them as labeled footnotes, not standalone verdicts on the client's error.", how: "“One premise to align, since it shapes what I just said: the research covers B, not A — which means…”" },
+  { id: "IV-3", cat: "client", name: "Small promises, quietly kept", principle: "Trust compounds through micro-commitments delivered on time — agendas confirmed, changes announced early, notes sent when promised.", how: "After every meeting: a short written recap of what was decided and what happens next." },
+  { id: "IV-4", cat: "client", name: "Candor without friction", principle: "Senior people value straight talk over polished comfort. Disagree without being disagreeable.", how: "“I'd push back on that — here's the data point that worries me.”" },
+  { id: "IV-5", cat: "client", name: "Make it their idea", principle: "Advice lands when the client feels ownership of the decision. Frame options and trade-offs; let them make the final move.", how: "“Two viable paths, different risks. Given your board's appetite, which trade-off sits better?”" },
+  { id: "IV-6", cat: "client", name: "Follow up with a handle", principle: "Chasers work when saying yes is effortless: one question, a date, a default.", how: "“To hit the 15th we need your call on X. If I don't hear by Thursday, I'll proceed with option A.”" },
+  { id: "IV-7", cat: "client", name: "Hold the line by naming the shared stake", principle: "Decline improper requests by protecting something you both value — not by moralizing.", how: "“Removing the risk page would expose you if it surfaces later — let me reframe it so it lands better instead.”" },
+  { id: "IV-8", cat: "client", name: "Blame no one, absorb nothing", principle: "Delivering others' delays: facts, impact, recovery plan. No scapegoats, no false ownership.", how: "“An upstream dependency moved our timeline a week. Here's the revised plan and what we're doing to protect the final date.”" },
+  // V — Peers, Juniors & Third Parties
+  { id: "V-1", cat: "peers", name: "Peers move on shared goals", principle: "Without authority, verdicts bounce. Describe the impact on the joint outcome and propose a fix you both benefit from.", how: "“When the module lands late I rework mine overnight. Could we try a mid-week sync so we both stop firefighting?”" },
+  { id: "V-2", cat: "peers", name: "Correct the work, protect the person", principle: "For juniors: specific error, specific fix, confidence restated. First-timers remember tone longer than content.", how: "“Two numbers need re-pulling — here's the right source. Structure and instincts are right; this is a normal first-run miss.”" },
+  { id: "V-3", cat: "peers", name: "Verify hearsay at the source", principle: "Second-hand criticism is data about a conversation you weren't in. Go direct, ask openly, don't act on the relay.", how: "“I'd rather hear it from you — is there something about my workstream you'd like done differently?”" },
+  { id: "V-4", cat: "peers", name: "Bridge public undermining", principle: "When a colleague contradicts you in front of a client: acknowledge, reframe as rigor, take the detail offline.", how: "“Right — we pressure-tested this internally, which is why we're confident in the range. Happy to walk through the debate after.”" },
+  { id: "V-5", cat: "peers", name: "End rescue patterns kindly", principle: "Helping is generous once, structural the third time. Name the pattern, offer process, not your evenings.", how: "“I can't tonight. I've noticed these land on Fridays — want to set an earlier checkpoint so we're not both stuck?”" },
+  { id: "V-6", cat: "peers", name: "Persuade by lending people reasons", principle: "Support follows credibility, common ground, and a story people can retell — not the strength of your conviction.", how: "Frame your proposal in terms of what each listener is already trying to achieve." },
+  // VI — Advocating for Yourself
+  { id: "VI-1", cat: "self", name: "Report outcomes, not effort", principle: "Contributions become visible as useful information, not applause requests. State what was at risk and what is now safe.", how: "“Heads-up: the pipeline issue that would have hit Monday's delivery is fixed — details if useful.”" },
+  { id: "VI-2", cat: "self", name: "Ask for the room you want", principle: "Staffing and projects go to people who signaled interest early and specifically. Wanting quietly counts as not wanting.", how: "“I hear the AI workstream is staffing up — I've done X and Y in that space and would love to be considered.”" },
+  { id: "VI-3", cat: "self", name: "Open the promotion conversation", principle: "Evidence plus a question — you're not demanding a verdict, you're asking for the map.", how: "“I believe I'm operating at the next level on A, B, C. What would you need to see to support the case?”" },
+  { id: "VI-4", cat: "self", name: "Close with who / what / when", principle: "Conversations without owners and dates evaporate. State the decision, the actions, and how open points get resolved.", how: "“So: I take A by Wed, you confirm B, and we decide C at Friday's check-in — correct?”" },
+  { id: "VI-5", cat: "self", name: "Keep your version on record", principle: "Your reality doesn't need anyone's signature to exist. Keep a quiet work log — evidence calms the powerless feeling and occasionally wins the long game.", how: "Dates, deliverables, key emails. Not for battle — for ground under your feet." },
+];
+
+const QS_EN = [
+  // I — Managing Up (10)
+  { id: "b1", cat: "up", level: "Easy", title: "Receiving feedback", kp: ["I-1"],
+    scenario: "In a 1:1, your manager says: “The analysis you sent the client last week buried the conclusion too deep — they had to dig for the main point.”\n\nHow do you respond? Write down what you would actually say.",
+    keyPoints: "Key points: no explaining the backstory, no over-apologizing; respond with “got it + concrete next actions (A, B, C)”; give the manager certainty that this has been received and will change." },
+  { id: "b2", cat: "up", level: "Easy", title: "Weekly progress update", kp: ["I-3"],
+    scenario: "Friday afternoon. This week you completed 6 of 15 expert interviews, and discovered one market segment's data diverges sharply from the client's expectations (a potential landmine). Next week: finish interviews, start the mid-point readout.\n\nWrite the update message to your manager.",
+    keyPoints: "Key points: clear structure (done / found / next); the risk is raised proactively rather than hidden; short, no padding, no fishing for credit." },
+  { id: "b3", cat: "up", level: "Medium", title: "After being corrected in public", kp: ["I-5"],
+    scenario: "In the team channel, you added an answer to one of the client's questions. Your manager replied publicly: “That wasn't the client's question.” You've checked — the client did ask it in their email, just from a different angle than your manager read it.\n\nYou now message her privately. Write your opening and what you'd say.",
+    keyPoints: "Key points: don't fight over who's right; present evidence framed as aligning information, not winning an appeal; leave her a graceful exit; calm tone." },
+  { id: "b4", cat: "up", level: "Hard", title: "Delivering bad news early", kp: ["I-2"],
+    scenario: "A report sent to the client three days ago used the wrong data definition on one page — numbers off by ~15%. The client hasn't noticed. Your manager has a client call this afternoon.\n\nYou go tell her now. Write what you would say.",
+    keyPoints: "Key points: report immediately; lead with the problem, no wind-up; attach impact and fix (which page, when corrected, suggested client framing); no excessive self-blame." },
+  { id: "b11", cat: "up", level: "Hard", title: "Deciding while the boss is offline", kp: ["I-2", "III-6"],
+    scenario: "Your manager is on a long-haul flight, unreachable for six hours. The client needs one design detail confirmed by end of day, and you're 80% sure how your manager would decide.\n\nWrite (a) your reply to the client, and (b) the note your manager finds when she lands.",
+    keyPoints: "Key points: to the client — decide within known intent, label it (“confirming per our working assumption”); to the manager — what happened, what you decided, why, and what can still be reversed; no apology theater." },
+  { id: "b12", cat: "up", level: "Easy", title: "Asking without looking lost", kp: ["I-8"],
+    scenario: "You've taken over a new workstream and one foundational concept isn't clear to you. Guessing risks real errors; asking feels like exposing yourself.\n\nWrite the question message you'd send your manager.",
+    keyPoints: "Key points: bring your homework (what you checked) and your best guess; ask a narrow, answerable question; frame as verification, not rescue." },
+  { id: "b13", cat: "up", level: "Hard", title: "Correcting someone senior, live", kp: ["I-4", "IV-4"],
+    scenario: "In a working session, a partner senior to your manager proposes an approach built on a factual error — and the correct data is on your laptop. The room is full.\n\nWrite how you'd raise it, in the moment.",
+    keyPoints: "Key points: correct the fact, not the person; label intent (“one data point that might affect this”); offer the information, let the senior draw the conclusion; no triumph." },
+  { id: "b14", cat: "up", level: "Hard", title: "Two bosses, one Friday", kp: ["I-7", "II-3"],
+    scenario: "Your US-based senior manager and your European manager have each given you a deliverable landing this Friday. Doing both well is impossible; they haven't spoken to each other about it.\n\nWrite the message that surfaces the conflict (and decide who you send it to).",
+    keyPoints: "Key points: don't privately absorb the conflict; make both demands visible in one place; state your capacity honestly; hand the priority decision back to them; neutral tone, no complaint." },
+  { id: "b15", cat: "up", level: "Medium", title: "Feedback that flows uphill", kp: ["I-6"],
+    scenario: "Your manager keeps rewriting your slides the night before client meetings, introducing errors you then have to fix live. You want this to change without it landing as an accusation.\n\nWrite how you'd open this conversation in your next 1:1.",
+    keyPoints: "Key points: anchor on a shared goal (clean client sessions); describe the pattern factually, not the person; propose a concrete alternative (earlier review checkpoint); ask rather than demand." },
+  { id: "b16", cat: "up", level: "Easy", title: "Closing the fuzzy meeting", kp: ["VI-4"],
+    scenario: "A one-hour internal meeting just ended with lots of discussion and no clear owners. You suspect nothing will happen by next week.\n\nWrite the message you'd post in the team channel right after.",
+    keyPoints: "Key points: state what was decided; name who does what by when; flag the one open point and how it gets resolved; invite correction (“shout if I got any of this wrong”)." },
+
+  // II — Commitments & Capacity (5)
+  { id: "b5", cat: "capacity", level: "Easy", title: "The favor you can't do tonight", kp: ["II-3", "V-5"],
+    scenario: "5pm. A colleague messages: “The client just asked for a competitor comparison, due tonight — could you help me build two slides?” You have plans with your partner tonight, and your own deliverable due tomorrow morning.\n\nWrite your reply.",
+    keyPoints: "Key points: neither absorbing it nor flatly refusing; offer a workable alternative; clear boundary, collaborative tone." },
+  { id: "b6", cat: "capacity", level: "Medium", title: "New task lands on old deadlines", kp: ["II-2", "II-3"],
+    scenario: "Friday afternoon, your manager says: “The client wants a first-pass pricing analysis by Monday — you take it.” You already have two deliverables due Tuesday, and you don't want to work the weekend.\n\nWrite your reply.",
+    keyPoints: "Key points: don't swallow it on the spot; make capacity transparent and hand the trade-off back; quote a genuinely feasible timeline, not a flattering one." },
+  { id: "b7", cat: "capacity", level: "Hard", title: "Renegotiating a promise", kp: ["II-4", "II-5"],
+    scenario: "Last week you committed to a complete market sizing model by Thursday. It's Tuesday evening, and the data cleaning is far messier than expected — by Thursday you can only produce a rough version.\n\nYou decide to say something now. Write the message.",
+    keyPoints: "Key points: flag early, not at deadline; one honest sentence on why; a new specific commitment or options; keep her in control of the decision." },
+  { id: "b17", cat: "capacity", level: "Hard", title: "Scope that grew in the dark", kp: ["II-3", "I-4"],
+    scenario: "Over four weekly calls, the client has “casually” added three small requests. Individually trivial, together they're beyond the SOW — and your manager leans toward pleasing the client.\n\nWrite how you'd raise this with your manager internally.",
+    keyPoints: "Key points: quantify the accumulation (hours, not feelings); frame as protecting the core delivery, not resisting the client; offer options (absorb X, defer Y, re-scope Z); let the manager own the client call." },
+  { id: "b18", cat: "capacity", level: "Medium", title: "The handover that lets you vanish", kp: ["II-6"],
+    scenario: "You're off for five days next week; the project is in a critical phase. You want to actually disconnect — no laptop on the beach.\n\nWrite the handover message to your manager and team.",
+    keyPoints: "Key points: named deputy per open item; status + next step + where things live; what merits interrupting you (almost nothing) and how; no apologizing for taking leave." },
+
+  // III — Performing Under Pressure (5)
+  { id: "b8", cat: "pressure", level: "Medium", title: "Challenged mid-presentation", kp: ["III-2"],
+    scenario: "You're presenting to the client. On the key data slide, they interrupt: “With a sample size that small, what does this even prove?” Your heart rate spikes and your mind goes briefly blank.\n\nWrite what you would say (including how you buy yourself a beat to recover).",
+    keyPoints: "Key points: receive before defending (buffer + honest acknowledgment); support beyond sample size or commit to follow-up validation; no panicked stacking; parking to a written follow-up is allowed." },
+  { id: "b19", cat: "pressure", level: "Medium", title: "Called on without an opinion", kp: ["III-6"],
+    scenario: "Mid-meeting, your manager turns to you: “What's your take on this?” — and you haven't formed one yet.\n\nWrite your first two or three sentences.",
+    keyPoints: "Key points: structured improv — observation, tentative read, what you'd verify; label it as initial; no bluffing, no collapsing into “I don't know”." },
+  { id: "b20", cat: "pressure", level: "Easy", title: "The demo that died", kp: ["III-3"],
+    scenario: "Remote presentation to client executives. Your screen share freezes and won't recover. Eight people are waiting in silence.\n\nWrite what you say in the next thirty seconds, and your recovery order.",
+    keyPoints: "Key points: narrate calmly (silence reads as chaos); give the room something (verbal walk-through of the key point) while switching (send the deck / co-presenter shares); pre-decided fallback order, not live invention." },
+  { id: "b21", cat: "pressure", level: "Medium", title: "Ten minutes left, no airtime", kp: ["III-1", "V-6"],
+    scenario: "Five-person client call. Two senior colleagues have dominated the discussion; you have one important point; ten minutes remain.\n\nWrite the sentence you use to enter.",
+    keyPoints: "Key points: enter on a hook (“before we close, one thing that affects the timeline —”); one point, stated conclusion-first; brevity is the price of the slot." },
+  { id: "b22", cat: "pressure", level: "Medium", title: "The question you can't answer", kp: ["III-7"],
+    scenario: "The client asks a factual question you genuinely can't answer. The room goes quiet; your manager is present.\n\nWrite your response.",
+    keyPoints: "Key points: own the gap without theatrics; commit to a specific follow-up (what, by when); optionally offer adjacent knowledge clearly labeled as such; no improvised guessing." },
+
+  // IV — Client Communication (6)
+  { id: "b9", cat: "client", level: "Medium", title: "The written clarification", kp: ["IV-2", "IV-3"],
+    scenario: "In the meeting, the client kept assuming your research covered Scenario A — it actually covers Scenario B. You didn't unpack it live. Now you're writing the follow-up email and need two or three sentences that clarify the premise and what it means for the conclusions.\n\nWrite those sentences.",
+    keyPoints: "Key points: clarification serves the conclusions (a labeled footnote, not a standalone correction); state what B means for what was presented; aligning tone, brief." },
+  { id: "b10", cat: "client", level: "Hard", title: "Five questions — which first?", kp: ["IV-1", "IV-2"],
+    scenario: "The client fires off five scattered questions. The last two are the real business decisions; the first reveals they've misread the research premise (A vs B) — which will distort everything.\n\nWrite your first three or four sentences (order and bridges).",
+    keyPoints: "Key points: answer the two core questions first; fold the A/B clarification in afterwards with intent labeled; don't answer mechanically in order." },
+  { id: "b23", cat: "client", level: "Hard", title: "The delay that isn't your fault", kp: ["IV-8"],
+    scenario: "An upstream team's delay pushes your delivery by a week. You're the one who informs the client.\n\nWrite the email — without blaming colleagues, without absorbing false ownership, and without losing the client's confidence.",
+    keyPoints: "Key points: facts and impact first; recovery plan with a protected end date; “we” language for the team, no scapegoats; offer a checkpoint to rebuild confidence." },
+  { id: "b24", cat: "client", level: "Hard", title: "The page they want deleted", kp: ["IV-7", "IV-4"],
+    scenario: "A client contact asks you privately to “drop that page before it goes to the board” — but it's the key risk disclosure.\n\nWrite your reply.",
+    keyPoints: "Key points: hold the line by naming the shared stake (their exposure if it surfaces later); offer a constructive alternative (reframe, contextualize, pre-brief); no moralizing, no cave-in; loop in your manager appropriately." },
+  { id: "b25", cat: "client", level: "Easy", title: "The chaser that works", kp: ["IV-6"],
+    scenario: "Five days ago you emailed the client's key decision-maker for a sign-off. Silence. The deadline is close.\n\nWrite the follow-up.",
+    keyPoints: "Key points: one question, restated so no scrolling is needed; a date tied to a consequence; a default option if no reply; warm, zero passive aggression." },
+  { id: "b26", cat: "client", level: "Hard", title: "Make the decision theirs", kp: ["IV-5", "IV-1"],
+    scenario: "Your analysis clearly favors Option B, but this client resists being told what to do — recommendations from consultants tend to die in their committee.\n\nWrite how you'd present the choice in the steering meeting so the decision lands as theirs.",
+    keyPoints: "Key points: present both options with honest trade-offs; anchor criteria to what the client already said they value; ask the deciding question instead of stating the verdict; be ready to confirm their pick in writing." },
+
+  // V — Peers, Juniors & Third Parties (6)
+  { id: "b27", cat: "peers", level: "Hard", title: "The criticism you heard second-hand", kp: ["V-3"],
+    scenario: "A colleague tells you privately: “In the leadership meeting, your manager called your workstream the weakest link.” Your manager has never said this to you.\n\nDo you raise it? Write your opening line if you do — or your reasoning if you don't.",
+    keyPoints: "Key points: don't act on the relay or reveal the source; go direct with an open question about the workstream, not the quote; invite feedback rather than demand explanation; keep the informer safe." },
+  { id: "b28", cat: "peers", level: "Medium", title: "Third Friday-night rescue", kp: ["V-5"],
+    scenario: "The same colleague asks you to save his deliverable on a Friday evening — for the third time, and again because he started late. You've helped twice.\n\nWrite your reply.",
+    keyPoints: "Key points: decline this instance kindly; name the pattern without diagnosis of character; offer structure (earlier checkpoint) instead of your evening; leave the relationship warm." },
+  { id: "b29", cat: "peers", level: "Hard", title: "Undermined in front of the client", kp: ["V-4"],
+    scenario: "Mid-presentation, your colleague interjects: “Actually, that data is still debated internally.” The client's expression shifts.\n\nWrite what you say next, in the room.",
+    keyPoints: "Key points: bridge, don't battle; reframe internal debate as rigor; state what you're jointly confident in; park the detail for offline; settle scores never in front of the client." },
+  { id: "b30", cat: "peers", level: "Medium", title: "The module that keeps breaking", kp: ["V-1"],
+    scenario: "A peer's module errors out repeatedly, and each failure means you rework your part overnight. You have no authority over him.\n\nWrite how you'd open the conversation.",
+    keyPoints: "Key points: shared goal first; describe impact on the joint outcome factually; propose a mutual fix (checkpoint, test protocol); no verdicts on his competence." },
+  { id: "b31", cat: "peers", level: "Easy", title: "Her first analysis has errors", kp: ["V-2"],
+    scenario: "A junior colleague's first independent analysis contains clear mistakes. She's visibly nervous about how it went.\n\nWrite your feedback message.",
+    keyPoints: "Key points: specific errors, specific fixes, right sources; separate the work from the person; restate confidence explicitly; calibrate as a normal first-run miss." },
+  { id: "b32", cat: "peers", level: "Medium", title: "Support without authority", kp: ["V-6"],
+    scenario: "You want to pilot an AI-assisted workflow for the team. You need two peers to try it for two weeks — they're busy and skeptical, and you can't make anyone do anything.\n\nWrite your pitch message.",
+    keyPoints: "Key points: frame in terms of their current pain, not your idea's elegance; shrink the ask (two weeks, reversible); give them a story they can retell; make trying easier than declining." },
+
+  // VI — Advocating for Yourself (3)
+  { id: "b33", cat: "self", level: "Medium", title: "The weekend save nobody saw", kp: ["VI-1"],
+    scenario: "Over the weekend you quietly fixed a data-pipeline issue that would have wrecked Monday's delivery. Nobody knows.\n\nWrite how you mention it at Monday's stand-up.",
+    keyPoints: "Key points: report as risk-information, not applause request (“a heads-up: X would have hit the delivery — it's fixed”); one line on impact; offer detail rather than pushing it; stop talking after two sentences." },
+  { id: "b34", cat: "self", level: "Medium", title: "Asking for the project you want", kp: ["VI-2"],
+    scenario: "Next quarter's AI-related engagement is staffing up. The partner leading it has met you once. You want on.\n\nWrite the message you send her.",
+    keyPoints: "Key points: signal specific interest early; two lines of relevant evidence (what you've done in the space); a small concrete ask (a chat, being considered); confident, not apologetic." },
+  { id: "b35", cat: "self", level: "Hard", title: "Opening the promotion conversation", kp: ["VI-3"],
+    scenario: "Mid-year review is close. You believe you're operating at the next level; your manager has never raised promotion.\n\nWrite your opening lines in the 1:1.",
+    keyPoints: "Key points: evidence + question, not demand (“here's what I've delivered at that level — what would you need to see?”); ask for the map and the timeline; secure a concrete follow-up; no apologizing for asking." },
+];
+
+const MOCK_EN = {
+  score: 72,
+  verdict: "Solid structure and honest framing, but the opening still leads with apology instead of the fix.",
+  dimensions: [
+    { name: "Leads with the problem", score: 4, comment: "The issue is stated in the first sentence — good." },
+    { name: "Brings a fix, not just news", score: 3, comment: "A corrected version is promised, but no time is attached to it." },
+    { name: "Emotional economy", score: 3, comment: "Two apologies where one would do; the second costs you authority." },
+  ],
+  highlights: ["“The corrected page is already being rebuilt” — this shows ownership without drama."],
+  issues: [
+    "“I'm so sorry, this is completely my fault” — over-apologizing spends her attention on your guilt instead of the fix.",
+    "No timestamp on the corrected version — “soon” is not a commitment she can plan around.",
+  ],
+  better: "One page in Thursday's report used the wrong data definition — the figures there are off by ~15%. The client hasn't flagged it. I've rebuilt the page; you'll have the corrected version by 2pm, before your call. Suggest we frame it as a proactive data refresh. Sorry for the slip — I've added a definitions check before anything goes out.",
+  tip: "Bad news travels with its own fix, or it's just anxiety delivered to someone else's desk.",
+};
+
+const DATA = {
+  zh: { cats: CATS_ZH, kps: KPS_ZH, qs: QS_ZH, mock: MOCK_ZH, levels: ["简单","中等","困难"] },
+  en: { cats: CATS_EN, kps: KPS_EN, qs: QS_EN, mock: MOCK_EN, levels: ["Easy","Medium","Hard"] },
+};
+
+const LEVEL_STYLE = {
+  "简单": { color: GREEN, bg: "rgba(46,107,78,0.08)" }, "中等": { color: AMBER, bg: "rgba(169,118,28,0.10)" }, "困难": { color: RED, bg: "rgba(196,50,42,0.08)" },
+  Easy: { color: GREEN, bg: "rgba(46,107,78,0.08)" }, Medium: { color: AMBER, bg: "rgba(169,118,28,0.10)" }, Hard: { color: RED, bg: "rgba(196,50,42,0.08)" },
+};
+
+/* ---------- UI strings ---------- */
+const T = {
+  zh: {
+    back: "← 返回题库", notesHand: "笔记", notesTitle: "知识点",
+    notesSub: "每道题背后的原则——附机制解释和一句拿来就能用的话。刷题前扫一眼,或单独当作复习卡片来读。",
+    notesEntrySub: "每道题背后的原则——附拿来就能用的话术", drill: "练:",
+    notesFooter: "有两项能力基本活在书面练习之外:深度倾听,以及在对方开始感到不安全时实时修复对话。先读懂它们,然后到真实的对话里去练。",
+    title: "职场沟通题库", tagline: "像刷 LeetCode 一样刷沟通题。写下你真实会说的话——AI 红笔批改。",
+    attempted: (d, t, a) => `已练 ${d}/${t}${a !== null ? ` · 平均 ${a} 分` : ""} · 进度保存在本设备`,
+    newQ: "+ 换一批新题", writing: "出题中…", genFail: "出题失败——请再试一次。", newBadge: "新",
+    footer: "答案与批改只保存在本设备浏览器 · 原型版", preview: "设计预览", previewLabel: "设计预览 · 批改页样例数据",
+    tests: "考察:", best: (n) => `最高 ${n}`,
+    placeholder: "写下你真实会说的话——不是标准答案,是你会发出去的那条消息。",
+    grading: "批改中…", submit: "提交批改", hint: "通常只需几秒",
+    past: (n) => `历史作答(${n})`, tryAgain: "再答一次", next: "下一题 →",
+    worked: "做对了的 ✓", improve: "可以更好的", stronger: "参考改写", original: "你的原稿",
+    gradeFail: (m) => `批改失败:${m}。请再试一次。`,
+  },
+  en: {
+    back: "← Back to drills", notesHand: "notes", notesTitle: "Study notes",
+    notesSub: "The principles behind the drills — each with the why and a phrase you can actually use. Skim before you practice, or read it as a revision sheet on its own.",
+    notesEntrySub: "The principles behind the drills — with phrases you can actually use", drill: "drill: ",
+    notesFooter: "Two skills live mostly outside written drills: deep listening, and repairing a live conversation when the other person stops feeling safe. Read about them, then practice them in real rooms.",
+    title: "Workplace Communication Drills", tagline: "Practice communication like you'd grind LeetCode. Write what you'd actually say — AI grades it in red pen.",
+    attempted: (d, t, a) => `${d}/${t} attempted${a !== null ? ` · avg ${a}` : ""} · progress saved on this device`,
+    newQ: "+ new questions", writing: "writing…", genFail: "Couldn't generate new questions — try again.", newBadge: "new",
+    footer: "Answers and feedback stay in this browser · Prototype", preview: "design preview", previewLabel: "DESIGN PREVIEW · graded view with sample data",
+    tests: "tests: ", best: (n) => `best: ${n}`,
+    placeholder: "Write what you would actually say — not the textbook answer, the message you'd really send.",
+    grading: "Grading…", submit: "Submit for grading", hint: "Usually just a few seconds",
+    past: (n) => `PAST ATTEMPTS (${n})`, tryAgain: "Try again", next: "Next question →",
+    worked: "what worked ✓", improve: "areas for improvement", stronger: "A stronger version", original: "Your original",
+    gradeFail: (m) => `Grading failed: ${m}. Please try again.`,
+  },
+};
+
+/* ---------- storage ---------- */
+const STORE_KEY = "drills-bi-v1";
+function safeGet(k) { try { return window.localStorage.getItem(k); } catch { return null; } }
+function safeSet(k, v) { try { window.localStorage.setItem(k, v); } catch {} }
+
+const EMPTY = () => ({ zh: { records: {}, gen: {} }, en: { records: {}, gen: {} } });
 
 async function loadStore() {
+  let s;
+  try { s = JSON.parse(safeGet(STORE_KEY)) || EMPTY(); } catch { s = EMPTY(); }
+  if (!s.zh) s = EMPTY();
+  // migrate the old single-language store once
   try {
-    const r = safeGet(STORE_KEY);
-    return r ? JSON.parse(r) : { records: {}, gen: {} };
-  } catch {
-    return { records: {}, gen: {} };
-  }
+    const old = JSON.parse(safeGet("drills-zh-ds-v1"));
+    if (old && Object.keys(s.zh.records).length === 0 && old.records) {
+      s.zh = { records: old.records || {}, gen: old.gen || {} };
+      safeSet(STORE_KEY, JSON.stringify(s));
+    }
+  } catch {}
+  return s;
 }
+async function saveStore(s) { safeSet(STORE_KEY, JSON.stringify(s)); }
 
-async function saveStore(store) {
-  safeSet(STORE_KEY, JSON.stringify(store));
-}
-
-/* ---- 访问口令(仅保存在你自己的浏览器里) ---- */
-const CODE_STORAGE = "drills-access-code";
-const ENTERED_FLAG = "drills-entered";
-function getAccessCode() { return safeGet(CODE_STORAGE) || ""; }
-function setAccessCode(k) { safeSet(CODE_STORAGE, (k || "").trim()); safeSet(ENTERED_FLAG, "1"); }
-function hasEntered() { return safeGet(ENTERED_FLAG) === "1"; }
-function resetEntry() { safeSet(ENTERED_FLAG, ""); }
-
-/* ------------------------------------------------------------------ */
-/*  API 调用                                                            */
-/* ------------------------------------------------------------------ */
+/* ---------- API ---------- */
 function extractJson(text) {
-  const start = text.indexOf("{");
-  const end = text.lastIndexOf("}");
-  if (start === -1 || end === -1) throw new Error("模型输出中没有找到 JSON");
+  const start = text.indexOf("{"); const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1) throw new Error("no JSON in model output");
   return JSON.parse(text.slice(start, end + 1));
 }
 
 async function callLLMOnce(prompt) {
   const response = await fetch("https://drills-proxy.abitai2026.workers.dev", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Access-Code": getAccessCode(),
-    },
-    body: JSON.stringify({
-      max_tokens: 1200,
-      messages: [{ role: "user", content: prompt }],
-    }),
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ max_tokens: 1200, messages: [{ role: "user", content: prompt }] }),
   });
-  if (response.status === 401) throw new Error("口令不正确");
-  if (response.status === 402) throw new Error("服务额度不足,请联系分享给你的人(402)");
-  if (response.status === 429) throw new Error("请求太频繁,请稍后再试(429)");
-  const data = await response.json();
-  if (data.error) throw new Error(data.error.message || "API 错误");
-  const text = data.choices?.[0]?.message?.content;
-  if (!text) throw new Error("API 返回为空");
+  if (response.status === 429) throw new Error("rate limited (429)");
+  const dataR = await response.json();
+  if (dataR.error) throw new Error(dataR.error.message || "API error");
+  const text = dataR.choices?.[0]?.message?.content;
+  if (!text) throw new Error("empty API response");
   return extractJson(text);
 }
-
-async function callClaude(prompt) {
-  try {
-    return await callLLMOnce(prompt);
-  } catch (e) {
-    if (/401|402|Key/.test(e.message)) throw e; // 配置类错误不重试
-    await new Promise((res) => setTimeout(res, 800));
-    return await callLLMOnce(prompt);
-  }
+async function callLLM(prompt) {
+  try { return await callLLMOnce(prompt); }
+  catch (e) { await new Promise((r) => setTimeout(r, 800)); return await callLLMOnce(prompt); }
 }
 
-async function gradeAnswer(q, answer) {
-  const raw = await callClaude(`你是一位资深咨询顾问兼沟通教练,正在批改一道职场沟通练习。要求具体、诚实、有建设性——目标是成长,不是审判。每个字段都保持简洁。
+/* ---------- prompts ---------- */
+function gradePrompt(lang, q, answer) {
+  if (lang === "zh") return `你是一位资深咨询顾问兼沟通教练,正在批改一道职场沟通练习。要求具体、诚实、有建设性——目标是成长,不是审判。每个字段都保持简洁。
 
 【场景】
 ${q.scenario}
@@ -359,60 +548,98 @@ ${answer}
 1. 沟通有成本:向上沟通消耗对方的注意力和自己的“打扰预算”。不要建议“每次都对齐/事事确认/凡事汇报”——事事请示在真实职场里读作缺乏判断力。好的标准是:小事自己定,只把高风险、影响他人、或不可逆的事拿去对齐。
 2. 建议要可执行:考虑真实的权力关系和时间压力。junior 不能“要求”老板做事,只能请求和给选项;别人没有义务立刻回复;会议上没有无限的发言时间。
 3. 不苛求措辞:真实消息是几分钟内写出来的,不是打磨过的范文。结构对、关键动作在,措辞朴素不扣分;不要因为“还可以更周全”而无限加码建议。
-4. 参考改写必须像真人会发的消息:长度克制、语气自然,不堆礼貌套话。
+4. 参考改写必须像真人会发的消息:长度克制、语气自然,不堆礼貌套话。并且只能使用场景和学员回答中已有的事实,不得发明场景里不存在的道具、人物或信息(比如场景里没提过的邮件、文档)。
 5. 判断优先于流程:学员展现好的判断(比如自己消化了本可上报的小事)是加分项,不要用“应该先对齐”来否定它。
 
 只返回 JSON(不要任何其他文字、不要 markdown 代码块):
 {
   "band": "档位,取值只能是: needs_work | solid | strong | excellent",
   "verdict": "一句话总评,具体、成长导向",
-  "dimensions": [
-    {"name": "维度名(从考点提炼3个,尽量短)", "score": 0到5的整数, "comment": "一句点评,20字以内"}
-  ],
+  "dimensions": [ {"name": "维度名(从考点提炼3个,尽量短)", "score": 0到5的整数, "comment": "一句点评,20字以内"} ],
   "highlights": ["做得好的点,1-2条,引用学员的原话片段"],
   "issues": ["改进点,1-2条,各指向一个具体的句子,35字以内"],
   "better": "基于学员的回答改写的更好版本,保留其中好的部分——长度与真实消息相当,不要更长",
   "tip": "一条可迁移的原则,一句话"
 }
-档位校准:needs_work = 敷衍或偏离考点;solid = 扎实但有明确升级空间;strong = 结构和措辞都到位;excellent = 极少给,几乎无可挑剔。维度打分要敢于拉开差距:好就是5,一般就是3,缺失就是1。`);
+档位校准:needs_work = 敷衍或偏离考点;solid = 扎实但有明确升级空间;strong = 结构和措辞都到位;excellent = 极少给,几乎无可挑剔。维度打分要敢于拉开差距:好就是5,一般就是3,缺失就是1。`;
 
-  // Deterministic score: band sets the range, dimension average sets the position within it.
-  const BANDS = { needs_work: [35, 59], solid: [60, 75], strong: [76, 88], excellent: [89, 97] };
-  const [lo, hi] = BANDS[raw.band] || BANDS.solid;
-  const dims = Array.isArray(raw.dimensions) ? raw.dimensions : [];
-  const avg = dims.length ? dims.reduce((a, d) => a + Math.max(0, Math.min(5, d.score || 0)), 0) / (dims.length * 5) : 0.5;
-  const score = Math.round(lo + (hi - lo) * avg);
-  return { ...raw, score };
+  return `You are a senior consultant and communication coach reviewing a workplace communication drill. Be specific, honest, and encouraging — the goal is growth, not judgment. Keep every field CONCISE.
+
+[Scenario]
+${q.scenario}
+
+[What this question tests]
+${q.keyPoints}
+
+[The learner's answer]
+${answer}
+
+[Reality principles — your advice must survive contact with a real workplace]
+1. Communication has a cost: constant check-ins spend the other person's attention and your own "interruption budget". Never advise "align every time / confirm everything" — over-asking reads as lack of judgment. The bar: decide small things yourself; align only what is high-risk, affects others, or is irreversible.
+2. Advice must be executable given real power dynamics and time pressure: a junior can request and offer options, not demand; people are not obliged to reply instantly; meetings do not grant unlimited airtime.
+3. Don't demand polished wording: real messages are written in minutes. If the structure and key moves are there, plain wording loses no points; don't pile on "could be even more thorough" suggestions.
+4. The rewrite must read like a message a real person would send: restrained length, natural tone, no stacked pleasantries. Use ONLY facts present in the scenario or the learner's answer — never invent props, people, or information (e.g. an email that the scenario never mentioned).
+5. Judgment beats process: if the learner showed good judgment (e.g. absorbing a small issue instead of escalating), that is a plus — do not override it with "should have aligned first".
+
+Return ONLY JSON (no other text, no markdown fences):
+{
+  "band": "one of: needs_work | solid | strong | excellent",
+  "verdict": "one short sentence, specific, growth-framed",
+  "dimensions": [ {"name": "short dimension name (derive 3 from key points)", "score": integer 0-5, "comment": "one short remark, max 15 words"} ],
+  "highlights": ["1-2 things done well, quoting short fragments of the learner's words"],
+  "issues": ["1-2 improvement areas, each pointing to a specific phrase, max 25 words each"],
+  "better": "a stronger version rewritten from the learner's answer, keeping what worked — same length as a real message",
+  "tip": "one transferable principle, one short sentence"
+}
+Band calibration: needs_work = minimal effort or off-target; solid = sound with clear upgrades available; strong = structure and wording both land; excellent = rare, near-flawless. Spread dimension scores honestly: good = 5, average = 3, missing = 1.`;
 }
 
-async function generateQuestions(catKey, existingTitles) {
-  const cat = CATEGORIES[catKey];
-  const out = await callClaude(`你为咨询顾问和企业职场人设计沟通练习题。为分类「${cat.name}」(主题:${cat.desc})生成 3 道新题。
+function genPrompt(lang, catName, catDesc, existingTitles) {
+  if (lang === "zh") return `你为咨询顾问和企业职场人设计沟通练习题。为分类「${catName}」(主题:${catDesc})生成 3 道新题。
 
 规则:
 - 场景真实、具体(咨询/企业环境);学员必须写下他们真实会说或会发的话。
-- 一道简单、一道中等、一道困难。\n- 场景要有真实的约束和张力(时间压力、权力不对等、信息不全),不出“只要礼貌沟通就能解决”的假题。
+- 一道简单、一道中等、一道困难。
+- 场景要有真实的约束和张力(时间压力、权力不对等、信息不全),不出“只要礼貌沟通就能解决”的假题。
 - 不得与以下已有题目重复:${existingTitles.join("; ")}
-- 每个场景以明确的写作指令结尾,如\u201c写下这条消息。\u201d或\u201c写下你会说的话。\u201d
+- 每个场景以明确的写作指令结尾,如“写下这条消息。”或“写下你会说的话。”
 
 只返回 JSON(不要任何其他文字、不要 markdown 代码块):
-{
-  "questions": [
-    { "title": "短标题,4-8字", "level": "简单|中等|困难", "scenario": "情境,2-4句,以写作指令结尾", "keyPoints": "考点:3-4条具体的评分标准,分号分隔" }
-  ]
-}`);
+{ "questions": [ { "title": "短标题,4-8字", "level": "简单|中等|困难", "scenario": "情境,2-4句,以写作指令结尾", "keyPoints": "考点:3-4条具体的评分标准,分号分隔" } ] }`;
+
+  return `You design workplace-communication drill questions for consultants and corporate professionals. Generate 3 NEW practice questions for the category "${catName}" (theme: ${catDesc}).
+
+Rules:
+- Realistic, specific scenarios (consulting / corporate settings); the learner must WRITE what they would actually say or send.
+- One Easy, one Medium, one Hard.
+- Scenarios need real constraints and tension (time pressure, power asymmetry, incomplete information) — no toy problems that polite wording alone would solve.
+- Must NOT duplicate these existing topics: ${existingTitles.join("; ")}
+- Each scenario ends with a clear writing instruction like "Write the message."
+
+Return ONLY JSON (no other text, no markdown fences):
+{ "questions": [ { "title": "short title, 3-6 words", "level": "Easy|Medium|Hard", "scenario": "the situation, 2-4 sentences, ending with the writing instruction", "keyPoints": "Key points: 3-4 concrete grading criteria, separated by semicolons" } ] }`;
+}
+
+const BANDS = { needs_work: [35, 59], solid: [60, 75], strong: [76, 88], excellent: [89, 97] };
+
+async function gradeAnswer(lang, q, answer) {
+  const raw = await callLLM(gradePrompt(lang, q, answer));
+  const [lo, hi] = BANDS[raw.band] || BANDS.solid;
+  const dims = Array.isArray(raw.dimensions) ? raw.dimensions : [];
+  const avg = dims.length ? dims.reduce((a, d) => a + Math.max(0, Math.min(5, d.score || 0)), 0) / (dims.length * 5) : 0.5;
+  return { ...raw, score: Math.round(lo + (hi - lo) * avg) };
+}
+
+async function generateQuestions(lang, catKey, cat, existingTitles) {
+  const out = await callLLM(genPrompt(lang, cat.name, cat.desc, existingTitles));
+  const levels = DATA[lang].levels;
   return (out.questions || []).slice(0, 3).map((x, i) => ({
-    ...x,
-    id: `g-${catKey}-${Date.now()}-${i}`,
-    cat: catKey,
-    kp: [],
-    level: ["简单", "中等", "困难"].includes(x.level) ? x.level : "中等",
+    ...x, id: `g-${catKey}-${Date.now()}-${i}`, cat: catKey, kp: [],
+    level: levels.includes(x.level) ? x.level : levels[1],
   }));
 }
 
-/* ------------------------------------------------------------------ */
-/*  小组件                                                              */
-/* ------------------------------------------------------------------ */
+/* ---------- shared components ---------- */
 function ExamCard({ children, style, className, marginColor = RED_SOFT }) {
   return (
     <div className={className} style={{ background: CARD, border: `1px solid ${RULE}`, boxShadow: "0 1px 3px rgba(35,43,54,0.06)", position: "relative", ...style }}>
@@ -436,18 +663,17 @@ function ScoreCircle({ score }) {
 function Dots({ n }) {
   return (
     <span style={{ ...mono, fontSize: 12, color: RED, letterSpacing: 2, whiteSpace: "nowrap" }}>
-      {"●".repeat(n)}
-      <span style={{ opacity: 0.35 }}>{"●".repeat(5 - n)}</span>
+      {"●".repeat(n)}<span style={{ opacity: 0.35 }}>{"●".repeat(5 - n)}</span>
     </span>
   );
 }
 
-function ResultView({ result, original }) {
+function ResultView({ result, original, t }) {
   return (
     <ExamCard>
       <div style={{ display: "flex", gap: 18, alignItems: "center", borderBottom: `1px dashed ${RULE}`, paddingBottom: 18, flexWrap: "wrap" }}>
         <ScoreCircle score={result.score} />
-        <p style={{ ...display, fontSize: 15.5, lineHeight: 1.7, margin: 0, color: INK, flex: 1, minWidth: 180 }}>{result.verdict}</p>
+        <p style={{ ...display, fontSize: 15.5, lineHeight: 1.65, margin: 0, color: INK, flex: 1, minWidth: 180 }}>{result.verdict}</p>
       </div>
       <div style={{ marginTop: 18, display: "flex", flexDirection: "column", gap: 14 }}>
         {result.dimensions?.map((d, i) => (
@@ -456,34 +682,34 @@ function ResultView({ result, original }) {
               <span style={{ fontSize: 13.5, fontWeight: 600 }}>{d.name}</span>
               <Dots n={Math.max(0, Math.min(5, d.score))} />
             </div>
-            <p style={{ fontSize: 13, color: SUBINK, margin: "4px 0 0", lineHeight: 1.7 }}>{d.comment}</p>
+            <p style={{ fontSize: 13, color: SUBINK, margin: "4px 0 0", lineHeight: 1.65 }}>{d.comment}</p>
           </div>
         ))}
       </div>
       {result.highlights?.length > 0 && (
         <div style={{ marginTop: 20 }}>
-          <h3 style={{ ...hand, fontSize: 22, margin: "0 0 4px", color: GREEN, transform: "rotate(-1deg)", fontWeight: 400 }}>做对了的 ✓</h3>
+          <h3 style={{ ...hand, fontSize: 22, margin: "0 0 4px", color: GREEN, transform: "rotate(-1deg)", fontWeight: 400 }}>{t.worked}</h3>
           {result.highlights.map((h, i) => (
-            <p key={i} style={{ fontSize: 13.5, lineHeight: 1.8, margin: "4px 0", color: "#39434F" }}>· {h}</p>
+            <p key={i} style={{ fontSize: 13.5, lineHeight: 1.75, margin: "4px 0", color: "#39434F" }}>· {h}</p>
           ))}
         </div>
       )}
       {result.issues?.length > 0 && (
         <div style={{ marginTop: 16 }}>
-          <h3 style={{ ...hand, fontSize: 22, margin: "0 0 4px", color: RED, transform: "rotate(-1deg)", fontWeight: 400 }}>可以更好的</h3>
+          <h3 style={{ ...hand, fontSize: 22, margin: "0 0 4px", color: RED, transform: "rotate(-1deg)", fontWeight: 400 }}>{t.improve}</h3>
           {result.issues.map((h, i) => (
-            <p key={i} style={{ fontSize: 13.5, lineHeight: 1.8, margin: "6px 0", color: "#39434F", borderLeft: `2px solid ${RED}`, paddingLeft: 10 }}>{h}</p>
+            <p key={i} style={{ fontSize: 13.5, lineHeight: 1.75, margin: "6px 0", color: "#39434F", borderLeft: `2px solid ${RED}`, paddingLeft: 10 }}>{h}</p>
           ))}
         </div>
       )}
       <div style={{ marginTop: 20, background: "#FBF8F1", border: `1px dashed #CFC8B6`, padding: "14px 16px" }}>
-        <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px" }}>参考改写</h3>
-        <p style={{ fontSize: 13.5, lineHeight: 1.85, margin: 0, whiteSpace: "pre-wrap", color: "#39434F" }}>{result.better}</p>
+        <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px" }}>{t.stronger}</h3>
+        <p style={{ fontSize: 13.5, lineHeight: 1.8, margin: 0, whiteSpace: "pre-wrap", color: "#39434F" }}>{result.better}</p>
       </div>
       {original && (
         <div style={{ marginTop: 12, border: `1px dashed ${RULE}`, padding: "14px 16px" }}>
-          <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px", color: SUBINK }}>你的原稿</h3>
-          <p style={{ fontSize: 13.5, lineHeight: 1.85, margin: 0, whiteSpace: "pre-wrap", color: SUBINK }}>{original}</p>
+          <h3 style={{ ...display, fontSize: 14.5, fontWeight: 700, margin: "0 0 6px", color: SUBINK }}>{t.original}</h3>
+          <p style={{ fontSize: 13.5, lineHeight: 1.8, margin: 0, whiteSpace: "pre-wrap", color: SUBINK }}>{original}</p>
         </div>
       )}
       {result.tip && (
@@ -493,88 +719,40 @@ function ResultView({ result, original }) {
   );
 }
 
-function ApiKeyPanel({ onDone }) {
-  const [val, setVal] = useState(getAccessCode());
-  const save = () => { setAccessCode(val); onDone(); };
-  return (
-    <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
-      <GlobalStyle />
-      <div style={{ maxWidth: 560, margin: "0 auto", padding: "48px 16px" }}>
-        <h1 style={{ ...display, fontSize: 24, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>欢迎</h1>
-        <p style={{ fontSize: 13.5, lineHeight: 1.85, color: SUBINK, margin: "12px 0 0" }}>
-          输入访问口令即可开始刷题。口令在分享这个链接的人那里。
-        </p>
-        <p style={{ fontSize: 12.5, lineHeight: 1.8, color: FAINT, margin: "8px 0 0" }}>
-          口令和你的作答记录都只保存在这台设备的浏览器里。
-        </p>
-        <input
-          type="text"
-          value={val}
-          onChange={(e) => setVal(e.target.value)}
-          placeholder="口令(没有可留空)"
-          style={{ width: "100%", boxSizing: "border-box", marginTop: 20, padding: "13px 14px", fontSize: 15, border: `1px solid ${RULE}`, background: CARD, ...mono, outline: "none", borderRadius: 0, WebkitAppearance: "none" }}
-        />
-        <button
-          onClick={save}
-          style={{ marginTop: 12, width: "100%", minHeight: 50, background: INK, color: "#FFF", border: "none", fontSize: 15, fontWeight: 600, cursor: "pointer", letterSpacing: 4, ...body }}
-        >
-          开始刷题
-        </button>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  知识点页(中性配色)                                                  */
-/* ------------------------------------------------------------------ */
-function StudyNotes({ questions, onBack, onOpenQuestion }) {
+function StudyNotes({ D, t, onBack, onOpenQuestion, questions }) {
   return (
     <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
       <GlobalStyle />
       <div style={{ maxWidth: 660, margin: "0 auto", padding: "18px 16px 64px" }}>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>
-          ← 返回题库
-        </button>
-
+        <button onClick={onBack} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>{t.back}</button>
         <header style={{ marginBottom: 22 }}>
-          <h1 style={{ ...display, fontSize: 24, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>知识点</h1>
-          <p style={{ margin: "8px 0 0", fontSize: 13.5, lineHeight: 1.75, color: SUBINK }}>
-            每道题背后的原则——附机制解释和一句拿来就能用的话。刷题前扫一眼,或单独当作复习卡片来读。
-          </p>
+          <h1 style={{ ...display, fontSize: 24, fontWeight: 700, margin: 0, lineHeight: 1.3 }}>{t.notesTitle}</h1>
+          <p style={{ margin: "8px 0 0", fontSize: 13.5, lineHeight: 1.7, color: SUBINK }}>{t.notesSub}</p>
           <div style={{ borderBottom: `3px double ${INK}`, marginTop: 14 }} />
         </header>
-
-        {Object.entries(CATEGORIES).map(([key, cat]) => {
-          const points = KNOWLEDGE.filter((k) => k.cat === key);
+        {Object.entries(D.cats).map(([key, cat]) => {
+          const points = D.kps.filter((k) => k.cat === key);
           return (
             <section key={key} style={{ marginBottom: 30 }}>
               <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 2 }}>
                 <span style={{ ...display, fontSize: 14, fontWeight: 700, color: SUBINK }}>{cat.num}·</span>
                 <h2 style={{ ...display, fontSize: 17, fontWeight: 700, margin: 0 }}>{cat.name}</h2>
               </div>
-              <p style={{ ...hand, fontSize: 20, color: SUBINK, margin: "0 0 12px", paddingLeft: 24, transform: "rotate(-0.5deg)" }}>
-                {cat.desc}
-              </p>
+              <p style={{ ...hand, fontSize: 20, color: SUBINK, margin: "0 0 12px", paddingLeft: 24, transform: "rotate(-0.5deg)" }}>{cat.desc}</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {points.map((k) => {
                   const linked = questions.filter((q) => q.kp?.includes(k.id));
                   return (
                     <ExamCard key={k.id} marginColor={INK_SOFT} style={{ boxShadow: "none" }}>
                       <h3 style={{ ...display, fontSize: 15, fontWeight: 700, margin: "0 0 6px" }}>{k.name}</h3>
-                      <p style={{ fontSize: 13, lineHeight: 1.8, margin: "0 0 8px", color: "#39434F" }}>{k.principle}</p>
-                      <p style={{ fontSize: 12.5, lineHeight: 1.75, margin: 0, color: SUBINK, background: "#F6F4ED", padding: "8px 10px", borderLeft: `2px solid ${INK_SOFT}` }}>
-                        {k.how}
-                      </p>
+                      <p style={{ fontSize: 13, lineHeight: 1.75, margin: "0 0 8px", color: "#39434F" }}>{k.principle}</p>
+                      <p style={{ fontSize: 12.5, lineHeight: 1.7, margin: 0, color: SUBINK, background: "#F6F4ED", padding: "8px 10px", borderLeft: `2px solid ${INK_SOFT}` }}>{k.how}</p>
                       {linked.length > 0 && (
                         <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 6 }}>
                           {linked.map((q) => (
-                            <button
-                              key={q.id}
-                              onClick={() => onOpenQuestion(q.id)}
-                              style={{ fontSize: 11.5, color: SUBINK, background: "none", border: `1px solid ${RULE}`, borderRadius: 999, padding: "4px 10px", cursor: "pointer", ...body }}
-                            >
-                              练:{q.title} →
+                            <button key={q.id} onClick={() => onOpenQuestion(q.id)}
+                              style={{ fontSize: 11.5, color: SUBINK, background: "none", border: `1px solid ${RULE}`, borderRadius: 999, padding: "4px 10px", cursor: "pointer", ...body }}>
+                              {t.drill}{q.title} →
                             </button>
                           ))}
                         </div>
@@ -586,58 +764,51 @@ function StudyNotes({ questions, onBack, onOpenQuestion }) {
             </section>
           );
         })}
-
-        <p style={{ fontSize: 12, color: FAINT, lineHeight: 1.8, marginTop: 8 }}>
-          有两项能力基本活在书面练习之外:深度倾听,以及在对方开始感到不安全时实时修复对话。先读懂它们,然后到真实的对话里去练。
-        </p>
+        <p style={{ fontSize: 12, color: FAINT, lineHeight: 1.75, marginTop: 8 }}>{t.notesFooter}</p>
       </div>
     </div>
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  App                                                                */
-/* ------------------------------------------------------------------ */
+/* ---------- App ---------- */
 function App() {
+  const [lang, setLang] = useState(safeGet("drills-lang") || "zh");
   const [view, setView] = useState("list");
   const [activeId, setActiveId] = useState(null);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
-  const [store, setStore] = useState({ records: {}, gen: {} });
+  const [store, setStore] = useState(EMPTY());
   const [storeReady, setStoreReady] = useState(false);
   const [genLoading, setGenLoading] = useState(null);
   const [genError, setGenError] = useState(null);
-  const [hasKey, setHasKey] = useState(true);
 
-  useEffect(() => {
-    loadStore().then((s) => { setStore(s); setStoreReady(true); });
-  }, []);
+  const D = DATA[lang];
+  const t = T[lang];
+  const slice = store[lang] || { records: {}, gen: {} };
 
-  useEffect(() => {
-    if (typeof window !== "undefined") window.scrollTo(0, 0);
-  }, [view, result]);
+  useEffect(() => { loadStore().then((s) => { setStore(s); setStoreReady(true); }); }, []);
+  useEffect(() => { if (typeof window !== "undefined") window.scrollTo(0, 0); }, [view, result, lang]);
 
-  const allQuestions = useMemo(() => {
-    const gen = Object.values(store.gen || {}).flat();
-    return [...BUILTIN, ...gen];
-  }, [store.gen]);
+  const switchLang = (l) => {
+    if (l === lang) return;
+    setLang(l); safeSet("drills-lang", l);
+    setView("list"); setActiveId(null); setResult(null); setError(null); setAnswer("");
+  };
 
+  const allQuestions = useMemo(() => [...D.qs, ...Object.values(slice.gen || {}).flat()], [lang, slice.gen]);
   const q = allQuestions.find((x) => x.id === activeId);
 
   const stats = useMemo(() => {
-    const scores = Object.values(store.records || {}).map((r) => r.best);
-    return {
-      done: scores.length,
-      avg: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null,
-    };
-  }, [store.records]);
+    const scores = Object.values(slice.records || {}).map((r) => r.best);
+    return { done: scores.length, avg: scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null };
+  }, [slice.records]);
 
-  const persist = (next) => { setStore(next); saveStore(next); };
+  const persist = (nextSlice) => { const next = { ...store, [lang]: nextSlice }; setStore(next); saveStore(next); };
 
   const getAttempts = (id) => {
-    const rec = (store.records || {})[id];
+    const rec = (slice.records || {})[id];
     if (!rec) return [];
     if (rec.attempts) return rec.attempts;
     if (rec.lastResult) return [{ answer: rec.lastAnswer, result: rec.lastResult, ts: rec.ts }];
@@ -647,124 +818,93 @@ function App() {
   const openQuestion = (id) => {
     const attempts = getAttempts(id);
     const last = attempts[attempts.length - 1];
-    setActiveId(id);
-    setAnswer(last?.answer || "");
-    setResult(null);
-    setError(null);
-    setView("question");
+    setActiveId(id); setAnswer(last?.answer || ""); setResult(null); setError(null); setView("question");
   };
 
   const submit = async () => {
     if (!answer.trim() || loading) return;
-    setLoading(true);
-    setError(null);
+    setLoading(true); setError(null);
     try {
-      const r = await gradeAnswer(q, answer);
+      const r = await gradeAnswer(lang, q, answer);
       setResult(r);
-      const prev = (store.records || {})[q.id] || {};
-      const history = prev.attempts
-        ? [...prev.attempts]
-        : prev.lastResult
-          ? [{ answer: prev.lastAnswer, result: prev.lastResult, ts: prev.ts }]
-          : [];
+      const prev = (slice.records || {})[q.id] || {};
+      const history = prev.attempts ? [...prev.attempts] : prev.lastResult ? [{ answer: prev.lastAnswer, result: prev.lastResult, ts: prev.ts }] : [];
       history.push({ answer, result: r, ts: Date.now() });
-      const attempts = history.slice(-30);
-      persist({
-        ...store,
-        records: { ...store.records, [q.id]: { best: Math.max(prev.best || 0, r.score), attempts } },
-      });
+      persist({ ...slice, records: { ...slice.records, [q.id]: { best: Math.max(prev.best || 0, r.score), attempts: history.slice(-30) } } });
     } catch (e) {
-      if (/口令/.test(e.message || "")) { resetEntry(); setHasKey(false); }
-      setError(`批改失败:${e.message || "未知错误"}。请再试一次。`);
-    } finally {
-      setLoading(false);
-    }
+      setError(t.gradeFail(e.message || "?"));
+    } finally { setLoading(false); }
   };
 
   const refreshCategory = async (catKey) => {
     if (genLoading) return;
-    setGenLoading(catKey);
-    setGenError(null);
+    setGenLoading(catKey); setGenError(null);
     try {
       const existing = allQuestions.filter((x) => x.cat === catKey).map((x) => x.title);
-      const fresh = await generateQuestions(catKey, existing);
+      const fresh = await generateQuestions(lang, catKey, D.cats[catKey], existing);
       if (!fresh.length) throw new Error("empty");
-      persist({ ...store, gen: { ...store.gen, [catKey]: fresh } });
-    } catch (e) {
-      setGenError(catKey);
-    } finally {
-      setGenLoading(null);
-    }
+      persist({ ...slice, gen: { ...slice.gen, [catKey]: fresh } });
+    } catch (e) { setGenError(catKey); } finally { setGenLoading(null); }
   };
 
-  if (!hasKey) {
-    return <ApiKeyPanel onDone={() => setHasKey(true)} />;
-  }
+  const LangToggle = () => (
+    <div style={{ display: "flex", gap: 6 }}>
+      {[["zh", "中文"], ["en", "EN"]].map(([l, label]) => (
+        <button key={l} onClick={() => switchLang(l)}
+          style={{ ...mono, fontSize: 12, padding: "5px 12px", borderRadius: 999, cursor: "pointer",
+            border: `1.5px solid ${lang === l ? INK : RULE}`,
+            background: lang === l ? INK : "transparent", color: lang === l ? "#FFF" : SUBINK }}>
+          {label}
+        </button>
+      ))}
+    </div>
+  );
 
-  /* ---------------- 知识点 ---------------- */
   if (view === "notes") {
-    return <StudyNotes questions={allQuestions} onBack={() => setView("list")} onOpenQuestion={openQuestion} />;
+    return <StudyNotes D={D} t={t} questions={allQuestions} onBack={() => setView("list")} onOpenQuestion={openQuestion} />;
   }
 
-  /* ---------------- 设计预览 ---------------- */
   if (view === "preview") {
     return (
       <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
         <GlobalStyle />
         <div style={{ maxWidth: 660, margin: "0 auto", padding: "18px 16px 64px" }}>
-          <button onClick={() => setView("list")} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>
-            ← 返回题库
-          </button>
-          <p style={{ ...mono, fontSize: 11.5, color: FAINT, margin: "0 0 12px" }}>设计预览 · 批改页样例数据</p>
-          <div className="rise">
-            <ResultView result={MOCK_RESULT} />
-          </div>
+          <button onClick={() => setView("list")} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>{t.back}</button>
+          <p style={{ ...mono, fontSize: 11.5, color: FAINT, margin: "0 0 12px" }}>{t.previewLabel}</p>
+          <div className="rise"><ResultView result={D.mock} t={t} /></div>
         </div>
       </div>
     );
   }
 
-  /* ---------------- 题库 ---------------- */
   if (view === "list") {
     return (
       <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
         <GlobalStyle />
         <div style={{ maxWidth: 660, margin: "0 auto", padding: "32px 16px 64px" }}>
           <header style={{ marginBottom: 8 }}>
-            <h1 style={{ ...display, fontSize: 27, fontWeight: 700, margin: 0, lineHeight: 1.3, letterSpacing: "0.01em" }}>
-              职场沟通题库
-            </h1>
-            <p style={{ margin: "12px 0 0", fontSize: 14, lineHeight: 1.75, color: SUBINK, maxWidth: 460 }}>
-              像刷 LeetCode 一样刷沟通题。写下你真实会说的话——AI 红笔批改。
-            </p>
-            <p style={{ ...mono, fontSize: 11.5, color: FAINT, margin: "12px 0 0" }}>
-              已练 {stats.done}/{allQuestions.length}{stats.avg !== null ? ` · 平均 ${stats.avg} 分` : ""} · 进度保存在本设备
-            </p>
+            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+              <h1 style={{ ...display, fontSize: 26, fontWeight: 700, margin: 0, lineHeight: 1.25 }}>{t.title}</h1>
+              <LangToggle />
+            </div>
+            <p style={{ margin: "12px 0 0", fontSize: 14, lineHeight: 1.7, color: SUBINK, maxWidth: 460 }}>{t.tagline}</p>
+            <p style={{ ...mono, fontSize: 11.5, color: FAINT, margin: "12px 0 0" }}>{t.attempted(stats.done, allQuestions.length, stats.avg)}</p>
             <div style={{ borderBottom: `3px double ${INK}`, marginTop: 16 }} />
           </header>
 
-          <button
-            onClick={() => setView("notes")}
-            style={{
-              display: "flex", alignItems: "center", gap: 12,
-              width: "100%", textAlign: "left", marginTop: 18,
-              background: CARD, border: `1px solid ${RULE}`,
-              borderLeft: `3px solid ${INK}`,
-              padding: "14px 16px", cursor: "pointer",
-              boxShadow: "0 1px 2px rgba(35,43,54,0.05)",
-            }}
-          >
-            <span style={{ ...hand, fontSize: 24, color: INK, flexShrink: 0, transform: "rotate(-3deg)" }}>笔记</span>
+          <button onClick={() => setView("notes")}
+            style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", marginTop: 18,
+              background: CARD, border: `1px solid ${RULE}`, borderLeft: `3px solid ${INK}`, padding: "14px 16px",
+              cursor: "pointer", boxShadow: "0 1px 2px rgba(35,43,54,0.05)" }}>
+            <span style={{ ...hand, fontSize: 24, color: INK, flexShrink: 0, transform: "rotate(-3deg)" }}>{t.notesHand}</span>
             <span style={{ flex: 1 }}>
-              <span style={{ display: "block", fontSize: 14, fontWeight: 600 }}>知识点</span>
-              <span style={{ display: "block", fontSize: 12.5, color: SUBINK, marginTop: 2 }}>
-                每道题背后的原则——附拿来就能用的话术
-              </span>
+              <span style={{ display: "block", fontSize: 14, fontWeight: 600 }}>{t.notesTitle}</span>
+              <span style={{ display: "block", fontSize: 12.5, color: SUBINK, marginTop: 2 }}>{t.notesEntrySub}</span>
             </span>
             <span style={{ color: FAINT, fontSize: 16 }}>→</span>
           </button>
 
-          {Object.entries(CATEGORIES).map(([key, cat]) => {
+          {Object.entries(D.cats).map(([key, cat]) => {
             const items = allQuestions.filter((x) => x.cat === key);
             const isGen = genLoading === key;
             return (
@@ -772,49 +912,32 @@ function App() {
                 <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
                   <span style={{ ...display, fontSize: 14, fontWeight: 700, color: RED }}>{cat.num}·</span>
                   <h2 style={{ ...display, fontSize: 18, fontWeight: 700, margin: 0, flex: 1 }}>{cat.name}</h2>
-                  <button
-                    onClick={() => refreshCategory(key)}
-                    disabled={!!genLoading || !storeReady}
-                    style={{ fontSize: 12, color: isGen ? FAINT : SUBINK, background: "none", border: `1px solid ${RULE}`, borderRadius: 999, padding: "5px 12px", cursor: isGen ? "wait" : "pointer", ...body }}
-                  >
-                    {isGen ? "出题中…" : "+ 换一批新题"}
+                  <button onClick={() => refreshCategory(key)} disabled={!!genLoading || !storeReady}
+                    style={{ fontSize: 12, color: isGen ? FAINT : SUBINK, background: "none", border: `1px solid ${RULE}`, borderRadius: 999, padding: "5px 12px", cursor: isGen ? "wait" : "pointer", ...body }}>
+                    {isGen ? t.writing : t.newQ}
                   </button>
                 </div>
                 <p style={{ fontSize: 12.5, color: FAINT, margin: "4px 0 12px", paddingLeft: 24 }}>{cat.desc}</p>
-                {genError === key && (
-                  <p style={{ fontSize: 12.5, color: RED, margin: "0 0 10px", paddingLeft: 24 }}>出题失败——请再试一次。</p>
-                )}
+                {genError === key && <p style={{ fontSize: 12.5, color: RED, margin: "0 0 10px", paddingLeft: 24 }}>{t.genFail}</p>}
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {items.map((item, idx) => {
-                    const lv = LEVEL_STYLE[item.level];
-                    const rec = (store.records || {})[item.id];
+                    const lv = LEVEL_STYLE[item.level] || LEVEL_STYLE.Medium;
+                    const rec = (slice.records || {})[item.id];
                     const isNew = String(item.id).startsWith("g-");
                     return (
-                      <button
-                        key={item.id}
-                        onClick={() => openQuestion(item.id)}
-                        style={{
-                          display: "flex", alignItems: "center", gap: 10,
-                          textAlign: "left", width: "100%", minHeight: 54,
-                          background: CARD, border: `1px solid ${RULE}`,
-                          padding: "12px 14px", cursor: "pointer",
-                          boxShadow: "0 1px 2px rgba(35,43,54,0.05)",
-                          position: "relative",
-                        }}
-                      >
+                      <button key={item.id} onClick={() => openQuestion(item.id)}
+                        style={{ display: "flex", alignItems: "center", gap: 10, textAlign: "left", width: "100%", minHeight: 54,
+                          background: CARD, border: `1px solid ${RULE}`, padding: "12px 14px", cursor: "pointer",
+                          boxShadow: "0 1px 2px rgba(35,43,54,0.05)", position: "relative" }}>
                         {rec && (
-                          <span style={{ ...hand, position: "absolute", right: 76, top: -5, fontSize: 20, color: RED, transform: "rotate(-5deg)", pointerEvents: "none" }}>
-                            {rec.best}
-                          </span>
+                          <span style={{ ...hand, position: "absolute", right: 76, top: -5, fontSize: 20, color: RED, transform: "rotate(-5deg)", pointerEvents: "none" }}>{rec.best}</span>
                         )}
                         <span style={{ ...mono, fontSize: 12, color: FAINT, width: 20, flexShrink: 0 }}>{String(idx + 1).padStart(2, "0")}</span>
-                        <span style={{ flex: 1, fontSize: 14.5, fontWeight: 500, lineHeight: 1.5 }}>
+                        <span style={{ flex: 1, fontSize: 14.5, fontWeight: 500, lineHeight: 1.45 }}>
                           {item.title}
-                          {isNew && <span style={{ ...hand, fontSize: 17, color: RED, marginLeft: 8 }}>新</span>}
+                          {isNew && <span style={{ ...hand, fontSize: 17, color: RED, marginLeft: 8 }}>{t.newBadge}</span>}
                         </span>
-                        <span style={{ fontSize: 11.5, color: lv.color, background: lv.bg, padding: "4px 9px", borderRadius: 999, flexShrink: 0, ...body }}>
-                          {item.level}
-                        </span>
+                        <span style={{ fontSize: 11.5, color: lv.color, background: lv.bg, padding: "4px 9px", borderRadius: 999, flexShrink: 0, ...body }}>{item.level}</span>
                       </button>
                     );
                   })}
@@ -824,106 +947,61 @@ function App() {
           })}
 
           <p style={{ marginTop: 44, fontSize: 11.5, color: FAINT, textAlign: "center" }}>
-            答案与批改只保存在本设备浏览器 · 原型版 ·{" "}
-            <button onClick={() => { setHasKey(false); }} style={{ background: "none", border: "none", color: FAINT, fontSize: 11.5, textDecoration: "underline", cursor: "pointer", padding: 0, ...body }}>
-              口令
-            </button>{" "}·{" "}
-            <button onClick={() => setView("preview")} style={{ background: "none", border: "none", color: FAINT, fontSize: 11.5, textDecoration: "underline", cursor: "pointer", padding: 0, ...body }}>
-              设计预览
-            </button>
+            {t.footer} ·{" "}
+            <button onClick={() => setView("preview")} style={{ background: "none", border: "none", color: FAINT, fontSize: 11.5, textDecoration: "underline", cursor: "pointer", padding: 0, ...body }}>{t.preview}</button>
           </p>
         </div>
       </div>
     );
   }
 
-  /* ---------------- 题目 ---------------- */
-  const lv = LEVEL_STYLE[q.level];
-  const rec = (store.records || {})[q.id];
+  /* question view */
+  const lv = LEVEL_STYLE[q.level] || LEVEL_STYLE.Medium;
+  const rec = (slice.records || {})[q.id];
   const attempts = getAttempts(q.id);
-  const linkedKp = KNOWLEDGE.filter((k) => q.kp?.includes(k.id));
+  const linkedKp = D.kps.filter((k) => q.kp?.includes(k.id));
   return (
     <div style={{ ...gridBg, minHeight: "100vh", ...body, color: INK }}>
       <GlobalStyle />
       <div style={{ maxWidth: 660, margin: "0 auto", padding: "18px 16px 64px" }}>
-        <button onClick={() => setView("list")} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>
-          ← 返回题库
-        </button>
+        <button onClick={() => setView("list")} style={{ background: "none", border: "none", color: SUBINK, fontSize: 14, cursor: "pointer", padding: "10px 0", ...body }}>{t.back}</button>
 
         <ExamCard className="rise">
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8, flexWrap: "wrap" }}>
-            <span style={{ ...display, fontSize: 13, color: FAINT }}>{CATEGORIES[q.cat].num}</span>
-            <span style={{ fontSize: 11.5, color: lv.color, background: lv.bg, padding: "3px 8px", borderRadius: 999, ...body }}>
-              {q.level}
-            </span>
-            {rec && (
-              <span style={{ ...hand, fontSize: 19, color: RED, transform: "rotate(-2deg)" }}>最高 {rec.best}</span>
-            )}
+            <span style={{ ...display, fontSize: 13, color: FAINT }}>{D.cats[q.cat].num}</span>
+            <span style={{ fontSize: 11.5, color: lv.color, background: lv.bg, padding: "3px 8px", borderRadius: 999, ...body }}>{q.level}</span>
+            {rec && <span style={{ ...hand, fontSize: 19, color: RED, transform: "rotate(-2deg)" }}>{t.best(rec.best)}</span>}
           </div>
-          <h1 style={{ ...display, fontSize: 21, fontWeight: 700, margin: "0 0 12px", lineHeight: 1.4 }}>{q.title}</h1>
-          <p style={{ fontSize: 14.5, lineHeight: 1.85, whiteSpace: "pre-wrap", margin: 0, color: "#39434F" }}>{q.scenario}</p>
+          <h1 style={{ ...display, fontSize: 21, fontWeight: 700, margin: "0 0 12px", lineHeight: 1.35 }}>{q.title}</h1>
+          <p style={{ fontSize: 14.5, lineHeight: 1.8, whiteSpace: "pre-wrap", margin: 0, color: "#39434F" }}>{q.scenario}</p>
           {linkedKp.length > 0 && (
-            <p style={{ fontSize: 11.5, color: FAINT, margin: "12px 0 0", ...body }}>
-              考察:{linkedKp.map((k) => k.name).join(" · ")}
-            </p>
+            <p style={{ fontSize: 11.5, color: FAINT, margin: "12px 0 0", ...body }}>{t.tests}{linkedKp.map((k) => k.name).join(" · ")}</p>
           )}
         </ExamCard>
 
         {!result && (
           <div style={{ marginTop: 14 }}>
-            <textarea
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="写下你真实会说的话——不是标准答案,是你会发出去的那条消息。"
-              rows={7}
-              style={{
-                width: "100%", boxSizing: "border-box",
-                background: CARD, border: `1px solid ${RULE}`,
-                padding: "14px", fontSize: 16, lineHeight: 1.8, ...body, color: INK,
-                resize: "vertical", outline: "none", borderRadius: 0, WebkitAppearance: "none",
-              }}
-            />
+            <textarea value={answer} onChange={(e) => setAnswer(e.target.value)} placeholder={t.placeholder} rows={7}
+              style={{ width: "100%", boxSizing: "border-box", background: CARD, border: `1px solid ${RULE}`, padding: "14px",
+                fontSize: 16, lineHeight: 1.7, ...body, color: INK, resize: "vertical", outline: "none", borderRadius: 0, WebkitAppearance: "none" }} />
             {error && <p style={{ color: RED, fontSize: 13, marginTop: 8 }}>{error}</p>}
-            <button
-              onClick={submit}
-              disabled={loading || !answer.trim()}
-              style={{
-                marginTop: 12, width: "100%", minHeight: 50,
-                background: loading || !answer.trim() ? "#B9BFC9" : INK,
-                color: "#FFF", border: "none", padding: "14px",
-                fontSize: 15, fontWeight: 600, cursor: loading ? "wait" : "pointer",
-                letterSpacing: 4, ...body,
-              }}
-            >
-              {loading ? "批改中…" : "提交批改"}
+            <button onClick={submit} disabled={loading || !answer.trim()}
+              style={{ marginTop: 12, width: "100%", minHeight: 50, background: loading || !answer.trim() ? "#B9BFC9" : INK,
+                color: "#FFF", border: "none", padding: "14px", fontSize: 15, fontWeight: 600, cursor: loading ? "wait" : "pointer", letterSpacing: 2, ...body }}>
+              {loading ? t.grading : t.submit}
             </button>
-            {loading && <p style={{ fontSize: 12.5, color: FAINT, textAlign: "center", marginTop: 10 }}>通常只需几秒</p>}
+            {loading && <p style={{ fontSize: 12.5, color: FAINT, textAlign: "center", marginTop: 10 }}>{t.hint}</p>}
             {!loading && attempts.length > 0 && (
               <div style={{ marginTop: 14 }}>
-                <p style={{ ...mono, fontSize: 11, color: FAINT, margin: "0 0 6px", letterSpacing: 0.5 }}>
-                  历史作答({attempts.length})
-                </p>
+                <p style={{ ...mono, fontSize: 11, color: FAINT, margin: "0 0 6px", letterSpacing: 0.5 }}>{t.past(attempts.length)}</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {[...attempts].reverse().map((a, i) => (
-                    <button
-                      key={a.ts || i}
-                      onClick={() => { setAnswer(a.answer || ""); setResult(a.result); }}
-                      style={{
-                        display: "flex", alignItems: "center", gap: 10,
-                        width: "100%", textAlign: "left", minHeight: 44,
-                        background: "none", border: `1px dashed ${RULE}`,
-                        padding: "9px 12px", cursor: "pointer", ...body,
-                      }}
-                    >
-                      <span style={{ ...hand, fontSize: 19, color: RED, width: 34, flexShrink: 0, transform: "rotate(-3deg)" }}>
-                        {a.result?.score}
-                      </span>
-                      <span style={{ flex: 1, fontSize: 12.5, color: SUBINK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                        {(a.answer || "").slice(0, 40)}
-                      </span>
-                      <span style={{ ...mono, fontSize: 10.5, color: FAINT, flexShrink: 0 }}>
-                        {a.ts ? new Date(a.ts).toLocaleDateString() : ""}
-                      </span>
+                    <button key={a.ts || i} onClick={() => { setAnswer(a.answer || ""); setResult(a.result); }}
+                      style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", textAlign: "left", minHeight: 44,
+                        background: "none", border: `1px dashed ${RULE}`, padding: "9px 12px", cursor: "pointer", ...body }}>
+                      <span style={{ ...hand, fontSize: 19, color: RED, width: 34, flexShrink: 0, transform: "rotate(-3deg)" }}>{a.result?.score}</span>
+                      <span style={{ flex: 1, fontSize: 12.5, color: SUBINK, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{(a.answer || "").slice(0, 40)}</span>
+                      <span style={{ ...mono, fontSize: 10.5, color: FAINT, flexShrink: 0 }}>{a.ts ? new Date(a.ts).toLocaleDateString() : ""}</span>
                     </button>
                   ))}
                 </div>
@@ -934,20 +1012,12 @@ function App() {
 
         {result && (
           <div style={{ marginTop: 16 }} className="rise">
-            <ResultView result={result} original={answer} />
+            <ResultView result={result} original={answer} t={t} />
             <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-              <button
-                onClick={() => { setResult(null); setError(null); }}
-                style={{ flex: 1, minHeight: 48, background: CARD, border: `1.5px solid ${INK}`, color: INK, padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", ...body }}
-              >
-                再答一次
-              </button>
-              <button
-                onClick={() => setView("list")}
-                style={{ flex: 1, minHeight: 48, background: INK, border: "none", color: "#FFF", padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", ...body }}
-              >
-                下一题 →
-              </button>
+              <button onClick={() => { setResult(null); setError(null); }}
+                style={{ flex: 1, minHeight: 48, background: CARD, border: `1.5px solid ${INK}`, color: INK, padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", ...body }}>{t.tryAgain}</button>
+              <button onClick={() => setView("list")}
+                style={{ flex: 1, minHeight: 48, background: INK, border: "none", color: "#FFF", padding: "12px", fontSize: 14, fontWeight: 600, cursor: "pointer", ...body }}>{t.next}</button>
             </div>
           </div>
         )}
@@ -955,7 +1025,6 @@ function App() {
     </div>
   );
 }
-
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
