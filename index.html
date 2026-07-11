@@ -561,7 +561,7 @@ ${answer}
   "better": "基于学员的回答改写的更好版本,保留其中好的部分——长度与真实消息相当,不要更长",
   "tip": "一条可迁移的原则,一句话"
 }
-档位校准:needs_work = 敷衍或偏离考点;solid = 扎实但有明确升级空间;strong = 结构和措辞都到位;excellent = 极少给,几乎无可挑剔。维度打分要敢于拉开差距:好就是5,一般就是3,缺失就是1。`;
+档位校准:needs_work = 敷衍或偏离考点;solid = 基本合格但缺了某个关键动作;strong = 关键动作齐全、结构清晰、没有硬伤——措辞还能更好不妨碍进入 strong;excellent = 几乎无可挑剔,偶尔要舍得给。solid 不是默认的安全选项:该给 strong 就给 strong。维度打分敢于拉开差距:好就是5,一般就是3,缺失就是1。`;
 
   return `You are a senior consultant and communication coach reviewing a workplace communication drill. Be specific, honest, and encouraging — the goal is growth, not judgment. Keep every field CONCISE.
 
@@ -591,7 +591,7 @@ Return ONLY JSON (no other text, no markdown fences):
   "better": "a stronger version rewritten from the learner's answer, keeping what worked — same length as a real message",
   "tip": "one transferable principle, one short sentence"
 }
-Band calibration: needs_work = minimal effort or off-target; solid = sound with clear upgrades available; strong = structure and wording both land; excellent = rare, near-flawless. Spread dimension scores honestly: good = 5, average = 3, missing = 1.`;
+Band calibration: needs_work = minimal effort or off-target; solid = passable but missing a key move; strong = key moves all present, clear structure, no real flaws — wording that could be polished further does NOT block strong; excellent = near-flawless, and do award it occasionally. solid is not the default safe pick: when strong is earned, give strong. Spread dimension scores honestly: good = 5, average = 3, missing = 1.`;
 }
 
 function genPrompt(lang, catName, catDesc, existingTitles) {
@@ -620,7 +620,7 @@ Return ONLY JSON (no other text, no markdown fences):
 { "questions": [ { "title": "short title, 3-6 words", "level": "Easy|Medium|Hard", "scenario": "the situation, 2-4 sentences, ending with the writing instruction", "keyPoints": "Key points: 3-4 concrete grading criteria, separated by semicolons" } ] }`;
 }
 
-const BANDS = { needs_work: [35, 59], solid: [60, 75], strong: [76, 88], excellent: [89, 97] };
+const BANDS = { needs_work: [42, 61], solid: [62, 78], strong: [79, 91], excellent: [92, 98] };
 
 async function gradeAnswer(lang, q, answer) {
   const raw = await callLLM(gradePrompt(lang, q, answer));
